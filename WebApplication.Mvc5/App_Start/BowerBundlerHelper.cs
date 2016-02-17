@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
-// Filename: BundlerHelper.cs
-// Date Created: 2016/01/20
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
+// Filename: BowerBundlerHelper.cs
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -15,7 +15,7 @@ using System.Collections.Concurrent;
 using System.Web.Mvc;
 using B4BCore;
 
-namespace Mvc5WithBowerAndGrunt
+namespace WebApplication.Mvc5
 {
     /// <summary>
     /// This class contains extention methods to provide a the inclusings of CSS and JavaScript files in your views
@@ -38,7 +38,6 @@ namespace Mvc5WithBowerAndGrunt
     /// </summary>
     public static class BowerBundlerHelper
     {
-
         private static readonly ConcurrentDictionary<string, MvcHtmlString> IncludeCache = new ConcurrentDictionary<string, MvcHtmlString>();
 
         /// <summary>
@@ -99,6 +98,5 @@ namespace Mvc5WithBowerAndGrunt
 
             return new MvcHtmlString(bundler.CalculateHtmlIncludes(bundleName, cssOrJs, isDebug));
         }
-
     }
 }

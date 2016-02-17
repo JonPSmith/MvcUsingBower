@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
-// Filename: Test01ReadConfig.cs
-// Date Created: 2016/02/04
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
+// Filename: Test02ReadBundleFile.cs
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -20,7 +20,6 @@ namespace Tests.UnitTests
 {
     public class Test02ReadBundleFile
     {
-
         [Test]
         public void TestCreateReadBundleFileNonCdnOk()
         {
@@ -159,6 +158,5 @@ namespace Tests.UnitTests
             //VERIFY
             ex.Message.ShouldEqual("The CDN bundle missingDevelopmentJs, array element 0, is missing a property called 'development'.");
         }
-
     }
 }

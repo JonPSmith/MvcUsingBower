@@ -1,10 +1,13 @@
 ﻿#region licence
-// =====================================================
-// Label Project - Application to allow labels to be created and sold online
+// ======================================================================================
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: TestFileHelpers.cs
-// Date Created: 2015/03/18
-// © Copyright Selective Analytics 2015. All rights reserved
-// =====================================================
+// Date Created: 2016/02/17
+// 
+// Under the MIT License (MIT)
+// 
+// Written by Jon Smith : GitHub JonPSmith, www.thereformedprogrammer.net
+// ======================================================================================
 #endregion
 
 using System;
@@ -120,6 +123,5 @@ namespace Tests.Helpers
 
             return projectDir.Substring(0, projectDir.LastIndexOf("\\", StringComparison.Ordinal));
         }
-
     }
 }

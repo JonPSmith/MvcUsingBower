@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: CdnInfo.cs
-// Date Created: 2016/02/08
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -23,13 +23,20 @@ namespace B4BCore.Internal
     /// </summary>
     internal class CdnInfo 
     {
-        private readonly string _bundleName;
-        private readonly JObject _jObject;
-
         private const string CdnHtmlIncludeFileUrlReplaceString = "{fileUrl}";
         internal const string CdnObjectDevelopmentPropertyName = "development";
 
         internal const string CdnObjectProductionPropertyName = "production";
+
+        private static readonly Regex MatchReplace = new Regex("{\\w*}", RegexOptions.Compiled);
+        private readonly string _bundleName;
+        private readonly JObject _jObject;
+
+        public CdnInfo(string bundleName, JObject jObject)
+        {
+            _bundleName = bundleName;
+            _jObject = jObject;
+        }
 
         /// <summary>
         /// The name of the file to use in debug mode.
@@ -47,11 +54,11 @@ namespace B4BCore.Internal
             ? _jObject[CdnObjectProductionPropertyName].Value<string>()
             : null;
 
-        public CdnInfo(string bundleName, JObject jObject)
-        {
-            _bundleName = bundleName;
-            _jObject = jObject;
-        }
+        //------------------------------------------------
+        //private helpers
+
+        private IEnumerable<JProperty> OtherProperties => _jObject.Properties()
+            .Where(x => x.Name != CdnObjectDevelopmentPropertyName && x.Name != CdnObjectProductionPropertyName);
 
         /// <summary>
         /// This creates the CDN html include string using the properties in the json bundle object
@@ -75,8 +82,6 @@ namespace B4BCore.Internal
             }
             return cdnHtmlFormatString;
         }
-
-        private static readonly Regex MatchReplace = new Regex("{\\w*}", RegexOptions.Compiled);
 
         /// <summary>
         /// This checks all the properties provided in the CDN object against the replace strings needed by the cdnHtmlFormatString
@@ -107,11 +112,5 @@ namespace B4BCore.Internal
             var nameValues = string.Join(", ", OtherProperties.Select(x => $"{x.Name}: {x.Value.ToString()}"));
             return $"Development: {Development}, Production: {Production}, {nameValues}";
         }
-
-        //------------------------------------------------
-        //private helpers
-
-        private IEnumerable<JProperty> OtherProperties => _jObject.Properties()
-            .Where(x => x.Name != CdnObjectDevelopmentPropertyName && x.Name != CdnObjectProductionPropertyName);
     }
 }

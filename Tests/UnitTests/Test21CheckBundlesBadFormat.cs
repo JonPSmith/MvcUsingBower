@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: Test21CheckBundlesBadFormat.cs
-// Date Created: 2016/02/16
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -19,7 +19,6 @@ namespace Tests.UnitTests
 {
     public class Test21CheckBundlesBadFormat
     {
-
         //------------------------------------------------------------
         //FAILURE TESTS NEED TO BE WRITTEN!
 

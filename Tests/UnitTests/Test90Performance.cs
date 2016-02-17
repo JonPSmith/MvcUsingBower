@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
-// Filename: Test01ReadConfig.cs
-// Date Created: 2016/02/04
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
+// Filename: Test90Performance.cs
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -114,6 +114,5 @@ namespace Tests.UnitTests
 
             //VERIFY
         }
-
     }
 }

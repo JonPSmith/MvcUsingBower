@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: ConfigInfo.cs
-// Date Created: 2016/02/03
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -23,7 +23,6 @@ namespace B4BCore.Internal
 {
     internal class ConfigInfo
     {
-
         /// <summary>
         /// Name of the json file that has the various bundle information
         /// </summary>
@@ -148,6 +147,5 @@ namespace B4BCore.Internal
                 return reader.ReadToEnd();
             }
         }
-
     }
 }

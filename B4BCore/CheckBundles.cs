@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: CheckBundles.cs
-// Date Created: 2016/02/03
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using B4BCore.Internal;
 
 namespace B4BCore
@@ -27,11 +26,11 @@ namespace B4BCore
     public class CheckBundles
     {
         private const string DefaultAppDataDirName = "App_Data\\";
+        private readonly string _bundleFilePath;
+        private readonly bool _checkForConcatFile;
+        private readonly ConfigInfo _config;
 
         private readonly string _mvcAppPath;
-        private readonly bool _checkForConcatFile;
-        private readonly string _bundleFilePath;
-        private readonly ConfigInfo _config;
         private readonly ReadBundleFile _reader;
         private readonly RelPathSearcher _searcher;
 
@@ -250,7 +249,6 @@ namespace B4BCore
         }
 
 
-
         private void AddErrorIfAnyFilesInBadFiles(string bundleName, IList<string> badFiles, string errorMessage, ICollection<string> errors)
         {
             if (badFiles.Any())
@@ -279,6 +277,5 @@ namespace B4BCore
             return Path.Combine(projectDir.Substring(0, projectDir.LastIndexOf("\\", StringComparison.Ordinal)),
                 classToFindProjectDirOf.Assembly.GetName().Name);
         }
-
     }
 }

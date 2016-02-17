@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: Test03CdnInfo.cs
-// Date Created: 2016/02/16
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -10,13 +10,11 @@
 // ======================================================================================
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using B4BCore.Internal;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Tests.Helpers;
-using Newtonsoft.Json.Linq;
 
 namespace Tests.UnitTests
 {
@@ -103,7 +101,5 @@ namespace Tests.UnitTests
             //VERIFY
             CollectionAssert.AreEquivalent(new string[] { "cdnSuccessTest" }, missingParams);
         }
-
-
     }
 }

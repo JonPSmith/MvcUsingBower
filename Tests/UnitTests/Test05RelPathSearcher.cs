@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
-// Filename: Test01ReadConfig.cs
-// Date Created: 2016/02/04
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
+// Filename: Test05RelPathSearcher.cs
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -20,7 +20,6 @@ namespace Tests.UnitTests
 {
     public class Test05RelPathSearcher
     {
-
         [Test]
         public void CheckGetActualFilePathFromVirtualPathFileOk()
         {
@@ -127,6 +126,5 @@ namespace Tests.UnitTests
             foundFiles.Count().ShouldEqual(0);
             errorMessage.ShouldEqual(expectedMessage);
         }
-
     }
 }

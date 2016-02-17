@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: FileWithDateUpdated.cs
-// Date Created: 2016/02/05
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -17,13 +17,6 @@ namespace B4BCore.Internal
 {
     internal class FileWithDateUpdated
     {
-
-        public string FileRelPath { get; private set; }
-
-        public bool Exists { get; private set; }
-
-        public DateTime LastWrittenUtc { get; private set; }
-
         public FileWithDateUpdated(string mvcAppPath, string relativePath)
         {
             FileRelPath = relativePath;
@@ -33,5 +26,10 @@ namespace B4BCore.Internal
                 LastWrittenUtc = File.GetLastWriteTimeUtc(filePath);
         }
 
+        public string FileRelPath { get; private set; }
+
+        public bool Exists { get; private set; }
+
+        public DateTime LastWrittenUtc { get; private set; }
     }
 }

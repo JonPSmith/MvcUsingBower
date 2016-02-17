@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: ReadBundleFile.cs
-// Date Created: 2016/02/03
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -23,11 +23,6 @@ namespace B4BCore.Internal
     {
         private readonly JObject _settings;
 
-        /// <summary>
-        /// This provides the list of property names that are present in the file settings file
-        /// </summary>
-        public ReadOnlyCollection<string> BundleNames { get; private set; }
-
         public ReadBundleFile(string bundleFilePath)
         {
             if (bundleFilePath == null)
@@ -41,6 +36,11 @@ namespace B4BCore.Internal
             _settings = JObject.Parse(File.ReadAllText(bundleFilePath));
             BundleNames = _settings.Properties().Select(x => x.Name).ToList().AsReadOnly();
         }
+
+        /// <summary>
+        /// This provides the list of property names that are present in the file settings file
+        /// </summary>
+        public ReadOnlyCollection<string> BundleNames { get; private set; }
 
         /// <summary>
         /// This returns an array of strings from the setting

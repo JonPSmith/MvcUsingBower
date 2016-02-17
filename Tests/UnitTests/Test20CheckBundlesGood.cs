@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: Test20CheckBundlesGood.cs
-// Date Created: 2016/02/04
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -12,15 +12,14 @@
 
 using System.Linq;
 using B4BCore;
-using Mvc5WithBowerAndGrunt;
 using NUnit.Framework;
 using Tests.Helpers;
+using WebApplication.Mvc5;
 
 namespace Tests.UnitTests
 {
     public class Test20CheckBundlesGood
     {
-
         [Test]
         public void TestCheckSingleBundleCssOk()
         {
@@ -138,6 +137,5 @@ namespace Tests.UnitTests
             //VERIFY
             error.ShouldEqual(null, error);
         }
-
     }
 }

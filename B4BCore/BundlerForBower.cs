@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: BundlerForBower.cs
-// Date Created: 2016/01/20
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -29,10 +29,10 @@ namespace B4BCore
     public class BundlerForBower
     {
         public const string B4BConfigFileName = "BundlerForBower.json";
+        private readonly string _appDataPath;
+        private readonly Func<string, string> _getActualFilePathFromVirtualPath;
 
         private readonly Func<string, string> _getContentUrl;
-        private readonly Func<string, string> _getActualFilePathFromVirtualPath;
-        private readonly string _appDataPath;
         private readonly RelPathSearcher _searcher;
 
         public BundlerForBower(Func<string, string> getContentUrl, Func<string, string> getActualFilePathFromVirtualPath, string appDataPath)

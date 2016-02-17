@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: RelPathSearcher.cs
-// Date Created: 2016/02/04
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 

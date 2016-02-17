@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: FileTypeConfigInfo.cs
-// Date Created: 2016/02/03
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -15,6 +15,14 @@ namespace B4BCore.Internal
     {
         public const string FileUrlParam = "{fileUrl}";
         public const string CachebusterParam = "{cachebuster}";
+
+        public FileTypeConfigInfo(string directory, string debugHtmlFormatString, string nonDebugHtmlFormatString, string cdnHtmlFormatString)
+        {
+            Directory = directory;
+            DebugHtmlFormatString = debugHtmlFormatString;
+            NonDebugHtmlFormatString = nonDebugHtmlFormatString;
+            CdnHtmlFormatString = cdnHtmlFormatString;
+        }
 
         /// <summary>
         /// This holds the Directory path of where the concatenated and minified files are
@@ -44,13 +52,5 @@ namespace B4BCore.Internal
         /// an optional {cachebuster} property that, if present, places a cachebuster value on the non-cdn file
         /// </summary>
         public string CdnHtmlFormatString { get; set; }
-
-        public FileTypeConfigInfo(string directory, string debugHtmlFormatString, string nonDebugHtmlFormatString, string cdnHtmlFormatString)
-        {
-            Directory = directory;
-            DebugHtmlFormatString = debugHtmlFormatString;
-            NonDebugHtmlFormatString = nonDebugHtmlFormatString;
-            CdnHtmlFormatString = cdnHtmlFormatString;
-        }
     }
 }

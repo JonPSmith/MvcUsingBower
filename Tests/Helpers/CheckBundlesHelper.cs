@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
+// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: CheckBundlesHelper.cs
-// Date Created: 2016/02/16
+// Date Created: 2016/02/17
 // 
 // Under the MIT License (MIT)
 // 
@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using B4BCore;
 
@@ -30,6 +29,7 @@ namespace Tests.Helpers
 
         public static readonly string MvcSetDir = B4BSetupHelper.GetDirRelToTestDirectory("CheckBundlesTests\\");
         public static readonly string BowerBundlesDir = B4BSetupHelper.GetDirRelToTestDirectory("CheckBundlesTests\\App_Data\\");
+
         private static readonly string OriginalBowerBundlesFilePath = 
             Path.Combine( B4BSetupHelper.GetDirRelToTestDirectory("CheckBundlesTests\\OriginalBowerBundle\\"), BowerBundlesFileName);
 
@@ -76,10 +76,6 @@ namespace Tests.Helpers
 
         private class DirAndFile
         {
-            public bool IsBowerBundle { get; private set; }
-            public string AbsDir { get; private set; }
-            public string FileName { get; private set; }
-
             public DirAndFile(string fileDefn)
             {
                 if (fileDefn == BowerBundlesMatchName)
@@ -97,6 +93,10 @@ namespace Tests.Helpers
                     FileName = dirFile[1];
                 }
             }
+
+            public bool IsBowerBundle { get; private set; }
+            public string AbsDir { get; private set; }
+            public string FileName { get; private set; }
 
             public void AddFileToAbsDir()
             {
