@@ -1,0 +1,9 @@
+﻿{
+  "BundlesFileName": "AspNetCore1BowerBundles.json",
+  "JsDirectory": "wwwroot/js/",
+  "JsDebugHtmlFormatString": "<script src='{fileUrl}'></script>",
+  "JsNonDebugHtmlFormatString": "<script src=\"{fileUrl}\" asp-append-version=\"true\"></script>",
+  "CssDirectory": "wwwroot/css/",
+  "CssDebugHtmlFormatString": "<link href='{fileUrl}' rel='stylesheet'/>",
+  "CssNonDebugHtmlFormatString": "<link href=\"{fileUrl}\" asp-append-version=\"true\" rel=\"stylesheet\"/>"
+}

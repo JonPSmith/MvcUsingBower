@@ -1,0 +1,9 @@
+﻿{
+  "BundlesFileName": "BowerBundles.json",
+  "JsDirectory": "TestData/js/",
+  "JsDebugHtmlFormatString": "<script src='{fileUrl}'></script>",
+  "JsNonDebugHtmlFormatString": "<script src='{fileUrl}?v={cachebuster}'></script>",
+  "CssDirectory": "TestData/css/",
+  "CssDebugHtmlFormatString": "<link href='{fileUrl}' rel='stylesheet'/>",
+  "CssNonDebugHtmlFormatString": "<link href='{fileUrl}?v={cachebuster}' rel='stylesheet'/>"
+}

@@ -1,0 +1,17 @@
+﻿{
+  "mainCss": [
+    "lib/bootstrap/dist/css/bootstrap.css",
+    "Content/site.css"
+  ],
+  "standardLibsJs": [
+    "lib/jquery/dist/jquery.js",
+    "lib/bootstrap/dist/js/bootstrap.js"
+  ],
+  "appLibsJs": [
+    "Scripts/MyScripts/*.js"
+  ],
+  "jqueryval": [
+    "lib/jquery.validation/dist/jquery.validate.js",
+    "lib/Microsoft.jQuery.Unobtrusive.Validation/jquery.validate.unobtrusive.js"
+  ]
+}

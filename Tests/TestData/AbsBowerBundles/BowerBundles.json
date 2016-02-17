@@ -1,0 +1,4 @@
+﻿{
+  "mainCss": [ "TestData/Content/bootstrap.css", "TestData/Content/site.css" ],
+  "appLibsJs": [ "TestData/Scripts/*.js" ]
+}

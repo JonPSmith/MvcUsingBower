@@ -1,0 +1,6 @@
+﻿{
+  "mainCss": [ "bootstrap.css", "site.css" ],
+  "standardLibsJs": [ "jquery.js", "bootstrap.js"],
+  "appLibsJs": [ "Script*.js"],
+  "jqueryval": [ "jquery.validate.js", "jquery.validate.unobtrusive.js"]
+}
