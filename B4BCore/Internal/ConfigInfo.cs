@@ -49,6 +49,16 @@ namespace B4BCore.Internal
         public string JsNonDebugHtmlFormatString { get; set; }
 
         /// <summary>
+        /// This holds the html to include the given file in the page when in non-debug mode
+        /// It contains four parameters:
+        /// {cdnUrl} which is the url to try to get the file from
+        /// {cdnSuccessTest} which is a JavaScript test which returns true if cnd loaded successfully
+        /// {fileUrl} which takes the name of the file to include if the cdnSuccessTest fails
+        /// an optional {cachebuster} property that, if present, places a cachebuster value on the non-cdn file
+        /// </summary>
+        public string JsCdnHtmlFormatString { get; set; }
+
+        /// <summary>
         /// This holds the Directory path of where the concatenated and minified files are
         /// </summary>
         public string CssDirectory { get; set; }
@@ -67,12 +77,22 @@ namespace B4BCore.Internal
         /// </summary>
         public string CssNonDebugHtmlFormatString { get; set; }
 
+        /// <summary>
+        /// This holds the html to include the given file in the page when in non-debug mode
+        /// It contains four parameters:
+        /// {cdnUrl} which is the url to try to get the file from
+        /// {cdnSuccessTest} which is a JavaScript test which returns true if cnd loaded successfully
+        /// {fileUrl} which takes the name of the file to include if the cdnSuccessTest fails
+        /// an optional {cachebuster} property that, if present, places a cachebuster value on the non-cdn file
+        /// </summary>
+        public string CssCdnHtmlFormatString { get; set; }
+
 
         public FileTypeConfigInfo GetFileTypeData(CssOrJs cssOrJs)
         {
             return cssOrJs == CssOrJs.Css
-                ? new FileTypeConfigInfo(CssDirectory, CssDebugHtmlFormatString, CssNonDebugHtmlFormatString)
-                : new FileTypeConfigInfo(JsDirectory, JsDebugHtmlFormatString, JsNonDebugHtmlFormatString);
+                ? new FileTypeConfigInfo(CssDirectory, CssDebugHtmlFormatString, CssNonDebugHtmlFormatString, CssCdnHtmlFormatString)
+                : new FileTypeConfigInfo(JsDirectory, JsDebugHtmlFormatString, JsNonDebugHtmlFormatString, JsCdnHtmlFormatString);
         }
 
         public FileTypeConfigInfo GetFileTypeData(string fileExtension)
@@ -86,7 +106,7 @@ namespace B4BCore.Internal
 
         public override string ToString()
         {
-            return $"BundlesFileName: {BundlesFileName}, JsDirectory: {JsDirectory}, JsDebugHtmlFormatString: {JsDebugHtmlFormatString}, JsNonDebugHtmlFormatString: {JsNonDebugHtmlFormatString}, CssDirectory: {CssDirectory}, CssDebugHtmlFormatString: {CssDebugHtmlFormatString}, CssNonDebugHtmlFormatString: {CssNonDebugHtmlFormatString}";
+            return $"BundlesFileName: {BundlesFileName}, JsDirectory: {JsDirectory}, JsDebugHtmlFormatString: {JsDebugHtmlFormatString}, JsNonDebugHtmlFormatString: {JsNonDebugHtmlFormatString}, JsCdnHtmlFormatString: {JsCdnHtmlFormatString}, CssDirectory: {CssDirectory}, CssDebugHtmlFormatString: {CssDebugHtmlFormatString}, CssNonDebugHtmlFormatString: {CssNonDebugHtmlFormatString}, CssCdnHtmlFormatString: {CssCdnHtmlFormatString}";
         }
 
 

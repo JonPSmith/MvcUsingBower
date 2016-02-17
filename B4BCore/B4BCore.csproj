@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="BundlerForBower.cs" />
     <Compile Include="CheckBundles.cs" />
+    <Compile Include="Internal\CdnInfo.cs" />
     <Compile Include="Internal\ConfigInfo.cs" />
     <Compile Include="Internal\FileTypeConfigInfo.cs" />
     <Compile Include="Internal\FileWithDateUpdated.cs" />

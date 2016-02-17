@@ -15,10 +15,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using B4BCore.Internal;
 
 namespace B4BCore
 {
+    /// <summary>
+    /// This is a class that contains various tests to ensure that your bundles are correctly formed and
+    /// they are up to date.
+    /// </summary>
     public class CheckBundles
     {
         private const string DefaultAppDataDirName = "App_Data\\";
@@ -39,9 +44,8 @@ namespace B4BCore
         /// AppDomain.CurrentDomain.GetData("DataDirectory").ToString() or an equivalent absolute directory path</param>
         /// <param name="checkForConcatFile">optional: by default it checks the concat file, 
         /// but if you go straight to the minified file then set this to false</param>
-        public CheckBundles(Type classToFindProjectDirOf, string appDataDir = null, bool checkForConcatFile = true)
-            : this(GetProjectDirectoryFromType(classToFindProjectDirOf), appDataDir, checkForConcatFile)
-        { }
+        public CheckBundles(Type classToFindProjectDirOf, string appDataDir = null,  bool checkForConcatFile = true)
+            : this(GetProjectDirectoryFromType(classToFindProjectDirOf), appDataDir, checkForConcatFile) {}
 
         /// <summary>
         /// This requires the path to the directory of the project where all the files are stored
@@ -72,57 +76,26 @@ namespace B4BCore
         public ReadOnlyCollection<string> CheckSingleBundleIsValid(string bundleName)
         {
             var errors = new List<string>();
-            var allFilesWithDate = AllFilesWithDate(bundleName, s => errors.Add(s));
-
-            if (!allFilesWithDate.Any())
-            {
-                errors.Add($"The bundle called {bundleName} did not contain any files to work on.");
+            var allBundleDebugLines = _reader.GetBundleDebugFiles(bundleName, "", s => errors.Add(s));
+            var allCdns = _reader.GetBundleCdnInfo(bundleName);
+            if (errors.Any())
                 return errors.AsReadOnly();
-            }
 
-            var fileExtension = Path.GetExtension(allFilesWithDate.First().FileRelPath);
-            var fileTypeInfo = _config.GetFileTypeData(fileExtension);
+            if (!allCdns.Any())
+                return CheckNonCdnBundle(bundleName, allBundleDebugLines).AsReadOnly();
+            
+            //It has Cdns 
+            if (allBundleDebugLines.Count() != allCdns.Count())
+                return new List<string>
+                    { $"The Bundle called {bundleName} contained both cdn and non cdn entries, which is not supported." }
+                    .AsReadOnly();
 
-            var missingFiles = allFilesWithDate.Where(x => !x.Exists).Select(x => x.FileRelPath).ToList();
-            if (missingFiles.Any())
-            {
-                errors.Add(
-                    $"The following files were missing for the bundles called '{bundleName}':\n - {string.Join("\n - ", missingFiles)}");
-                return errors.AsReadOnly();
-            }
+            return CheckCdnBundle(bundleName, allCdns).AsReadOnly();
 
-            FileWithDateUpdated concatFileInfo = null;
-            if (_checkForConcatFile)
-            {
-                concatFileInfo = new FileWithDateUpdated(_mvcAppPath, Path.Combine(_mvcAppPath, fileTypeInfo.Directory, bundleName + fileExtension));
-                if (!concatFileInfo.Exists)
-                {
-                    errors.Add($"Warning: the concat file '{bundleName}' is missing. Continuing test.");
-                    concatFileInfo = null;
-                }
-            }
-            var minfiedFileInfo =
-                new FileWithDateUpdated(_mvcAppPath, Path.Combine(_mvcAppPath, fileTypeInfo.Directory, bundleName + ".min" + fileExtension));
-            if (!minfiedFileInfo.Exists)
-            {
-                errors.Add($"The minified file '{bundleName}' is missing");
-                return errors.AsReadOnly();
-            }
-
-            var newerThanConcat = allFilesWithDate.Where(x => x.LastWrittenUtc > (concatFileInfo ?? minfiedFileInfo).LastWrittenUtc)
-                .Select(x => x.FileRelPath).ToList();
-            if (newerThanConcat.Any())
-                errors.Add(
-                    $"The concat file '{bundleName}' is out of date. Newer files are:\n - {string.Join("\n - ", newerThanConcat)}");
-
-            if (_checkForConcatFile && concatFileInfo != null && minfiedFileInfo.LastWrittenUtc < concatFileInfo.LastWrittenUtc)
-                errors.Add($"The minified file '{bundleName}' is out of date");
-
-            return errors.AsReadOnly();
         }
 
         /// <summary>
-        /// This checks all the bundles 
+        /// This checks all the bundles in the bundle file are valid
         /// </summary>
         /// <returns></returns>
         public ReadOnlyCollection<string> CheckAllBundlesAreValid()
@@ -136,6 +109,7 @@ namespace B4BCore
             return errors.AsReadOnly();
         }
 
+
         /// <summary>
         /// This checks that the minified files for each bundle is older than the 
         /// BowerBundles.json file that defines what is in a bundle.
@@ -143,14 +117,21 @@ namespace B4BCore
         /// <returns></returns>
         public string CheckBundleFileIsNotNewerThanMinifiedFiles()
         {
+            var errors = new List<string>();
+
             var bundleInfo = new FileWithDateUpdated(_mvcAppPath, _bundleFilePath);
-            var badFiles = (from bundleName in _reader.BundleNames
-                            let fileExtension = Path.GetExtension(_reader.GetSettingAsStringArray(bundleName, "").First())
-                            let fileTypeInfo = _config.GetFileTypeData(fileExtension)
-                            let minfiedFile = new FileWithDateUpdated(_mvcAppPath, Path.Combine(fileTypeInfo.Directory,
-                                    bundleName + ".min" + fileExtension))
-                            where !minfiedFile.Exists || minfiedFile.LastWrittenUtc < bundleInfo.LastWrittenUtc
-                            select minfiedFile.FileRelPath).ToList();
+
+            //Note: we exclude the cdn bundles as the minified file is not normally created by the build process
+            var badFiles = (from bundleName in _reader.BundleNames.Where(x => !_reader.GetBundleCdnInfo(x).Any())
+                let fileExtension = Path.GetExtension(_reader.GetBundleDebugFiles(bundleName, "", s => errors.Add(s)).First())
+                let fileTypeInfo = _config.GetFileTypeData(fileExtension)
+                let minfiedFile = new FileWithDateUpdated(_mvcAppPath, Path.Combine(fileTypeInfo.Directory,
+                        bundleName + ".min" + fileExtension))
+                where !minfiedFile.Exists || minfiedFile.LastWrittenUtc < bundleInfo.LastWrittenUtc
+                select minfiedFile.FileRelPath).ToList();
+
+            if (errors.Any())
+                return $"Errors in the BowerBundles file: {string.Join("\n", errors)}.";
 
             return badFiles.Any()
                 ? $"The following minified files have not been updated since the change in the bundle file:\n - {string.Join("\n - ", badFiles)}"
@@ -159,6 +140,124 @@ namespace B4BCore
 
         //------------------------------------------------------------------
         //private methods
+
+        private List<string> CheckCdnBundle(string bundleName, ICollection<CdnInfo> allCdns)
+        {
+            var errors = new List<string>();
+            var productionFileName = allCdns.FirstOrDefault(x => x.Production != null)?.Production;
+            if (productionFileName == null)
+            {
+                return new List<string> { $"In the CDN bundle called {bundleName} we need a property called {nameof(CdnInfo.Production)}"};
+            }
+
+            var fileExtension = Path.GetExtension(allCdns.First().Production);
+            var fileTypeInfo = _config.GetFileTypeData(fileExtension);
+
+            if (string.IsNullOrEmpty(fileTypeInfo.CdnHtmlFormatString))
+            {
+                return new List<string> { $"This configuration of BundlerForBower does not support CDN bundles for {fileExtension} files. Bad bundle is {bundleName}." };
+            }
+
+            var i = 0;
+            foreach (var properties in allCdns.Select(cdnInfo => cdnInfo.FindMissingPropertiesNeededByHtmlInclude(fileTypeInfo.CdnHtmlFormatString).ToList()))
+            {
+                if (properties.Any())
+                    errors.Add($"In the bundle called {bundleName}, array element {i}, the following properties were missing: {string.Join(", ", properties)}");
+                i++;
+            }
+            if (errors.Any())
+                return errors;
+
+            AddErrorIfAnyFilesInBadFiles(bundleName, 
+                allCdns.Where(x => x.Development != null && RelPathSearcher.ContainsSearchChars(x.Development))
+                .Select(x => x.Development).ToList(), "had 'development' with search strings", errors);
+            AddErrorIfAnyFilesInBadFiles(bundleName,
+                allCdns.Where(x => RelPathSearcher.ContainsSearchChars(x.Production))
+                .Select(x => x.Development).ToList(), "had 'production' with search strings", errors);
+
+            if (errors.Any())
+                //If any errors so far then not worth continuing
+                return errors;
+
+            var allDevelopmentWithDate = allCdns
+                .Select(x => new FileWithDateUpdated(_mvcAppPath, x.Development)).ToList();
+
+            AddErrorIfAnyFilesInBadFiles(bundleName,
+                allDevelopmentWithDate.Where(x => !x.Exists).Select(x => x.FileRelPath).ToList(), "in 'development' were missing", errors);
+
+            var allProductionWithDate = allCdns
+                .Select(x => new FileWithDateUpdated(_mvcAppPath, Path.Combine(fileTypeInfo.Directory, x.Production))).ToList();
+
+            AddErrorIfAnyFilesInBadFiles(bundleName,
+                allProductionWithDate.Where(x => !x.Exists).Select(x => x.FileRelPath).ToList(), "in 'production' were missing", errors);
+
+            return errors;
+        }
+
+        private List<string> CheckNonCdnBundle(string bundleName, IEnumerable<string> allBundleDebugLines)
+        {
+            var errors = new List<string>();
+            var allFilesWithDate = _searcher.UnpackBundle(allBundleDebugLines, s => errors.Add(s))
+                .Select(x => new FileWithDateUpdated(_mvcAppPath, x)).ToList();
+
+            if (!allFilesWithDate.Any())
+            {
+                errors.Add($"The bundle called {bundleName} did not contain any files to work on.");
+                return errors;
+            }
+
+            var fileExtension = Path.GetExtension(allFilesWithDate.First().FileRelPath);
+            var fileTypeInfo = _config.GetFileTypeData(fileExtension);
+
+            AddErrorIfAnyFilesInBadFiles(bundleName,
+                allFilesWithDate.Where(x => !x.Exists).Select(x => x.FileRelPath).ToList(), "were missing", errors);
+
+            FileWithDateUpdated concatFileInfo = null;
+            if (_checkForConcatFile)
+            {
+                concatFileInfo = new FileWithDateUpdated(_mvcAppPath,
+                    Path.Combine(_mvcAppPath, fileTypeInfo.Directory, bundleName + fileExtension));
+                if (!concatFileInfo.Exists)
+                {
+                    errors.Add($"Warning: the concat file for '{bundleName}' is missing. Continuing test.");
+                    concatFileInfo = null;
+                }
+            }
+            var minfiedFileInfo =
+                new FileWithDateUpdated(_mvcAppPath,
+                    Path.Combine(_mvcAppPath, fileTypeInfo.Directory, bundleName + ".min" + fileExtension));
+            if (!minfiedFileInfo.Exists)
+            {
+                errors.Add($"The minified file for '{bundleName}' is missing.");
+                return errors;
+            }
+
+            var newerFiles =
+                allFilesWithDate.Where(x => x.LastWrittenUtc > (concatFileInfo ?? minfiedFileInfo).LastWrittenUtc)
+                    .Select(x => x.FileRelPath).ToList();
+            if (newerFiles.Any())
+            {
+                var concatOrMinfied = concatFileInfo == null ? "minified" : "concat";
+                errors.Add(
+                    $"The {concatOrMinfied} file for '{bundleName}' is out of date. Newer files are:\n - {string.Join("\n - ", newerFiles)}");
+                    
+            }
+
+            if (_checkForConcatFile && concatFileInfo != null && minfiedFileInfo.LastWrittenUtc < concatFileInfo.LastWrittenUtc)
+                errors.Add($"The concat file for '{bundleName}' is newer than the minified file.");
+
+            return errors;
+        }
+
+
+
+        private void AddErrorIfAnyFilesInBadFiles(string bundleName, IList<string> badFiles, string errorMessage, ICollection<string> errors)
+        {
+            if (badFiles.Any())
+                errors.Add(
+                    $"The following files {errorMessage} in the bundles called '{bundleName}':\n - {string.Join("\n - ", badFiles)}");
+        }
+
 
         private static string GetProjectDirectoryFromType(Type classToFindProjectDirOf)
         {
@@ -174,17 +273,11 @@ namespace B4BCore
                 projectDir = pathToManipulate.Substring(0, pathToManipulate.Length - releaseEnding.Length);
 
             if (projectDir == null)
-                throw new InvalidOperationException($"Expected directory ending in {debugEnding} or {releaseEnding} but got {pathToManipulate}" +
+                throw new InvalidOperationException($"Expected directory ending in {debugEnding} or {releaseEnding} but got {pathToManipulate}"+
                     "Please use one of the other forms of the CheckBundles ctor and provide the absolute path to the project.");
 
             return Path.Combine(projectDir.Substring(0, projectDir.LastIndexOf("\\", StringComparison.Ordinal)),
                 classToFindProjectDirOf.Assembly.GetName().Name);
-        }
-
-        private List<FileWithDateUpdated> AllFilesWithDate(string bundleName, Action<string> errorHandler)
-        {
-            return _searcher.UnpackBundle(_reader.GetSettingAsStringArray(bundleName, ""), errorHandler)
-                .Select(x => new FileWithDateUpdated(_mvcAppPath, x)).ToList();
         }
 
     }

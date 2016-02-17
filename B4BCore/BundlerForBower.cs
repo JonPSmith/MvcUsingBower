@@ -11,7 +11,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using B4BCore.Internal;
@@ -49,34 +51,58 @@ namespace B4BCore
 
             var fileTypeInfo = config.GetFileTypeData(cssOrJs);
 
-            var sb = new StringBuilder();
+
             if (isDebug)
             {
+                var sb = new StringBuilder();
                 //we send the individual files as found in the bundle json file
-                foreach (var relFilePath in _searcher.UnpackBundle(reader.GetSettingAsStringArray(bundleName)))
+                foreach (var relFilePath in _searcher.UnpackBundle(reader.GetBundleDebugFiles(bundleName)))
                 {
                     sb.AppendLine(fileTypeInfo.DebugHtmlFormatString
                         .Replace(FileTypeConfigInfo.FileUrlParam, _getContentUrl(relFilePath)));
                 }
+                return sb.ToString();
             }
-            else
+            
+            //We are in nonDebug, i.e. production mode
+            var cdnLinks = reader.GetBundleCdnInfo(bundleName);
+
+            return cdnLinks.Any() 
+                ? FormCdnIncludes(cdnLinks, bundleName, cssOrJs, fileTypeInfo) 
+                : FormSingleMinifiedFileInclude(bundleName, cssOrJs, fileTypeInfo);
+        }
+
+        private string FormCdnIncludes(IEnumerable<CdnInfo> cdnLinks, string bundleName, CssOrJs cssOrJs, FileTypeConfigInfo fileTypeInfo)
+        {
+            if (string.IsNullOrEmpty(fileTypeInfo.CdnHtmlFormatString))
+                throw new InvalidOperationException(
+                    $"The bundle {bundleName} contains a cdn definition, but the current config does not support CDN for {cssOrJs}");
+
+            var sb = new StringBuilder();
+            //we send the individual files as found in the bundle json file
+            foreach (var cdnLink in cdnLinks)
             {
-                //form the virtual filepath of the minified file
-
-                var fileLocation = $"~/{fileTypeInfo.Directory}{bundleName}.min.{cssOrJs.ToString().ToLowerInvariant()}";
-                var fileUrl = _getContentUrl(fileLocation);
-                var htmlLink = fileTypeInfo.NonDebugHtmlFormatString.Replace(FileTypeConfigInfo.FileUrlParam, fileUrl);
-                if (fileTypeInfo.NonDebugHtmlFormatString.Contains(FileTypeConfigInfo.CachebusterParam))
-                {
-                    //I use a SHA256 Hash instead of the file datetime as it allows you to use the general Grunt 'build'
-                    //command, which rebuilds everything, and the cache buster won't change unless the content changes.
-                    var cacheBusterValue = GetChecksum(_getActualFilePathFromVirtualPath(fileLocation));
-                    htmlLink = htmlLink.Replace(FileTypeConfigInfo.CachebusterParam, cacheBusterValue);
-                }
-                sb.AppendLine(htmlLink);
+                var relFilePath = $"~/{fileTypeInfo.Directory}{cdnLink.Production}";
+                var httpFileUrl = _getContentUrl(relFilePath);
+                sb.AppendLine(cdnLink.BuildCdnIncludeString(fileTypeInfo.CdnHtmlFormatString, httpFileUrl,
+                    () => GetChecksum(_getActualFilePathFromVirtualPath(relFilePath))));
             }
-
             return sb.ToString();
+        }
+
+        private string FormSingleMinifiedFileInclude(string bundleName, CssOrJs cssOrJs, FileTypeConfigInfo fileTypeInfo)
+        {
+            var relFilePath = $"~/{fileTypeInfo.Directory}{bundleName}.min.{cssOrJs.ToString().ToLowerInvariant()}";
+            var fileUrl = _getContentUrl(relFilePath);
+            var htmlLink = fileTypeInfo.NonDebugHtmlFormatString.Replace(FileTypeConfigInfo.FileUrlParam, fileUrl);
+            if (fileTypeInfo.NonDebugHtmlFormatString.Contains(FileTypeConfigInfo.CachebusterParam))
+            {
+                //I use a SHA256 Hash instead of the file datetime as it allows you to use the general Grunt 'build'
+                //command, which rebuilds everything, and the cache buster won't change unless the content changes.
+                var cacheBusterValue = GetChecksum(_getActualFilePathFromVirtualPath(relFilePath));
+                htmlLink = htmlLink.Replace(FileTypeConfigInfo.CachebusterParam, cacheBusterValue);
+            }
+            return htmlLink;
         }
 
 

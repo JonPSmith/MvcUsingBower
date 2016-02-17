@@ -41,13 +41,13 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerCssDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"));
+            var b4b = new BundlerForBower( s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"));
 
             //ATTEMPT
             var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, true);
 
             //VERIFY
-            var lines = output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            var lines = output.Split(new [] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
             lines.Length.ShouldEqual(2);
             lines[0].ShouldEqual("<link href='url:Content/bootstrap.css' rel='stylesheet'/>\r");
             lines[1].ShouldEqual("<link href='url:Content/site.css' rel='stylesheet'/>\r");
@@ -63,7 +63,7 @@ namespace Tests.UnitTests
             var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, false);
 
             //VERIFY
-            output.ShouldEqual("<link href='url:css/mainCss.min.css?v=TdTxYoaXjmCw1qNZ3ECkVr0eMx3rj6OFikZ6GH_a_Hw' rel='stylesheet'/>\r\n");
+            output.ShouldEqual("<link href='url:css/mainCss.min.css?v=TdTxYoaXjmCw1qNZ3ECkVr0eMx3rj6OFikZ6GH_a_Hw' rel='stylesheet'/>");
         }
 
         [Test]
@@ -93,7 +93,42 @@ namespace Tests.UnitTests
             var output = b4b.CalculateHtmlIncludes("appLibsJs", CssOrJs.Js, false);
 
             //VERIFY
-            output.ShouldEqual("<script src='url:js/appLibsJs.min.js?v=SnW8SeyCxQMkwmWggnI6zdSJoIVYPkVYHyM4jpW3jaQ'></script>\r\n");
+            output.ShouldEqual("<script src='url:js/appLibsJs.min.js?v=SnW8SeyCxQMkwmWggnI6zdSJoIVYPkVYHyM4jpW3jaQ'></script>");
+        }
+
+        //--------------------------------------------------------------
+        //Now check with CDN
+
+        [Test]
+        public void TestBundlerForBowerWithCdnJsDebugOk()
+        {
+            //SETUP 
+            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("WithCdn\\"));
+
+            //ATTEMPT
+            var output = b4b.CalculateHtmlIncludes("standardLibsCdnJs", CssOrJs.Js, true);
+
+            //VERIFY
+            var lines = output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            lines.Length.ShouldEqual(2);
+            lines[0].ShouldEqual("<script src='url:lib/jquery/dist/jquery.js'></script>\r");
+            lines[1].ShouldEqual("<script src='url:lib/bootstrap/dist/js/bootstrap.js'></script>\r");
+        }
+
+        [Test]
+        public void TestBundlerForBowerWithCdnJsNonDebugOk()
+        {
+            //SETUP 
+            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("WithCdn\\"));
+
+            //ATTEMPT
+            var output = b4b.CalculateHtmlIncludes("standardLibsCdnJs", CssOrJs.Js, false);
+
+            //VERIFY
+            var lines = output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            lines.Length.ShouldEqual(2);
+            lines[0].ShouldEqual("<script src='https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js'></script><script>(window.jQuery||document.write(\"\\x3Cscript src='url:js/jquery.min.js?v=SnW8SeyCxQMkwmWggnI6zdSJoIVYPkVYHyM4jpW3jaQ'\\x3C/script>\"));</script>\r");
+            lines[1].ShouldEqual("<script src='https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js'></script><script>(window.jQuery && window.jQuery.fn && window.jQuery.fn.modal||document.write(\"\\x3Cscript src='url:js/bootstrap.min.js?v=SnW8SeyCxQMkwmWggnI6zdSJoIVYPkVYHyM4jpW3jaQ'\\x3C/script>\"));</script>\r");
         }
     }
 }

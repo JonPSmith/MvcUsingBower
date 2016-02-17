@@ -11,6 +11,7 @@
 #endregion
 
 using System.IO;
+using System.Linq;
 using B4BCore.Internal;
 using NUnit.Framework;
 using Tests.Helpers;
@@ -123,6 +124,7 @@ namespace Tests.UnitTests
             var foundFiles = searcher.FindAllFiles(relFilePath, s => errorMessage = s);
 
             //VERIFY
+            foundFiles.Count().ShouldEqual(0);
             errorMessage.ShouldEqual(expectedMessage);
         }
 

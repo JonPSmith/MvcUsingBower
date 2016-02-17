@@ -3,7 +3,10 @@
   "JsDirectory": "js/",
   "JsDebugHtmlFormatString": "<script src='{fileUrl}'></script>",
   "JsNonDebugHtmlFormatString": "<script src='{fileUrl}?v={cachebuster}'></script>",
+  //see http://stackoverflow.com/a/236106/1434764 about why we need to escape the document.write()
+  "JsCdnHtmlFormatString": "<script src='{cdnUrl}'></script><script>({cdnSuccessTest}||document.write(\"\\x3Cscript src='{fileUrl}?v={cachebuster}'\\x3C/script>\"));</script>",
   "CssDirectory": "css/",
   "CssDebugHtmlFormatString": "<link href='{fileUrl}' rel='stylesheet'/>",
-  "CssNonDebugHtmlFormatString": "<link href='{fileUrl}?v={cachebuster}' rel='stylesheet'/>"
+  "CssNonDebugHtmlFormatString": "<link href='{fileUrl}?v={cachebuster}' rel='stylesheet'/>",
+  "CssCdnHtmlFormatString": ""    //I have not currently implemented CDN for CSS files. Doable, but complicated.
 }

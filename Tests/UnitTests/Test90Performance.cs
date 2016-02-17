@@ -53,9 +53,22 @@ namespace Tests.UnitTests
             //ATTEMPT
             using (new TimerToConsole("Read default config and user config"))
             {
-                ConfigInfo.ReadConfig(TestFileHelpers.GetTestFileFilePath("bundlerForBower01*.json"));
+                ConfigInfo.ReadConfig(TestFileHelpers.GetTestFileFilePath("bundlerForBower02*.json"));
             }
             //VERIFY           
+        }
+
+        [Test]
+        public void TestReadBundleFileOk()
+        {
+            //SETUP 
+
+            //ATTEMPT
+            using (new TimerToConsole("Read bundleFile"))
+            {
+                new ReadBundleFile(TestFileHelpers.GetTestFileFilePath("BowerBundles01*.json"));
+            }
+            //VERIFY
         }
 
         [Test]

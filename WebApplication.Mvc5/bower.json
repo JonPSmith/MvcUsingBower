@@ -1,0 +1,10 @@
+{
+  "name": "ASP.NET",
+  "private": true,
+  "dependencies": {
+    "jquery": "2.1.4",
+    "bootstrap": "3.3.5",
+    "Microsoft.jQuery.Unobtrusive.Validation": "~3.2.3",
+    "foo-handlebars": "4.0.5"
+  }
+}

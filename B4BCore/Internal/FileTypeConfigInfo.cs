@@ -35,11 +35,22 @@ namespace B4BCore.Internal
         /// </summary>
         public string NonDebugHtmlFormatString { get; private set; }
 
-        public FileTypeConfigInfo(string directory, string debugHtmlFormatString, string nonDebugHtmlFormatString)
+        /// <summary>
+        /// This holds the html to include the given file in the page when in non-debug mode
+        /// It contains four parameters:
+        /// {cdnUrl} which is the url to try to get the file from
+        /// {cdnSuccessTest} which is a JavaScript test which returns true if cnd loaded successfully
+        /// {fileUrl} which takes the name of the file to include if the cdnSuccessTest fails
+        /// an optional {cachebuster} property that, if present, places a cachebuster value on the non-cdn file
+        /// </summary>
+        public string CdnHtmlFormatString { get; set; }
+
+        public FileTypeConfigInfo(string directory, string debugHtmlFormatString, string nonDebugHtmlFormatString, string cdnHtmlFormatString)
         {
             Directory = directory;
             DebugHtmlFormatString = debugHtmlFormatString;
             NonDebugHtmlFormatString = nonDebugHtmlFormatString;
+            CdnHtmlFormatString = cdnHtmlFormatString;
         }
     }
 }

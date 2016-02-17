@@ -1,0 +1,11 @@
+{
+  "simpleJs": [ "lib/myfile.js" ],
+  "cdnJs": [
+    {
+      "development": "lib/myfile.js",
+      "production": "myfile.min.js",
+      "cdnUrl": "https://dummy",
+      "cdnSuccessTest": "window.MyFile"
+    }
+  ]
+}

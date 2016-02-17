@@ -1,6 +1,31 @@
 ﻿{
   "mainCss": [ "bootstrap.css", "site.css" ],
-  "standardLibsJs": [ "jquery.js", "bootstrap.js"],
+  "siteCss": [ "site.css" ],
+  "bootstrapCdnCss": [
+    {
+      "development": "lib/bootstrap/dist/css/bootstrap.min.css",
+      "production": "css/bootstrap.min.css",
+      "cdnUrl": "https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/css/bootstrap.min.css",
+      "testClass": "sr-only",
+      "testProperty": "position",
+      "testValue": "absolute"
+    }
+  ],
+  "standardLibsJs": [ "jquery.js", "bootstrap.js" ],
+  "standardLibsCndJs": [
+    {
+      "development": "lib/jquery/dist/jquery.js",
+      "production": "jquery.min.js",
+      "cdnUrl": "https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js",
+      "cdnSuccessTest": "window.jQuery"
+    },
+    {
+      "development": "lib/bootstrap/js/bootstrap.js",
+      "production": "bootstrap.min.js",
+      "cdnUrl": "https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js",
+      "cdnSuccessTest": "window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+    }
+  ],
   "appLibsJs": [ "Script1.js", "Script2.js", "Script3.js" ],
-  "jqueryval": [ "jquery.validate.js", "jquery.validate.unobtrusive.js"]
+  "jqueryval": [ "jquery.validate.js", "jquery.validate.unobtrusive.js" ]
 }

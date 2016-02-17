@@ -1,7 +1,7 @@
 ﻿#region licence
 // ======================================================================================
 // Mvc5WithBowerAndGrunt - An example of how to change a MVC5 project to Bower and Grunt
-// Filename: Test01ReadConfig.cs
+// Filename: Test20CheckBundlesGood.cs
 // Date Created: 2016/02/04
 // 
 // Under the MIT License (MIT)
@@ -10,8 +10,6 @@
 // ======================================================================================
 #endregion
 
-using System;
-using System.IO;
 using System.Linq;
 using B4BCore;
 using Mvc5WithBowerAndGrunt;
@@ -20,7 +18,7 @@ using Tests.Helpers;
 
 namespace Tests.UnitTests
 {
-    public class Test20CheckBundles
+    public class Test20CheckBundlesGood
     {
 
         [Test]
@@ -53,7 +51,7 @@ namespace Tests.UnitTests
         public void TestCheckSingleBundleJsViaTypeOk()
         {
             //SETUP
-            var checker = new CheckBundles(typeof(Test20CheckBundles), B4BSetupHelper.GetDirRelToTestDirectory("AbsBowerBundles\\"));
+            var checker = new CheckBundles(typeof(Test20CheckBundlesGood), B4BSetupHelper.GetDirRelToTestDirectory("AbsBowerBundles\\"));
 
             //ATTEMPT
             var errors = checker.CheckSingleBundleIsValid("appLibsJs");
@@ -116,9 +114,30 @@ namespace Tests.UnitTests
         //------------------------------------------------------------
         //Check with cdns
 
-        //------------------------------------------------------------
-        //FAILURE TESTS NEED TO BE WRITTEN!
+        [Test]
+        public void TestCheckSingleBundleIsUpToDateWithCdnOk()
+        {
+            var checker = new CheckBundles(TestFileHelpers.GetTestDataFileDirectory(), B4BSetupHelper.GetDirRelToTestDirectory("WithCdn\\"));
 
-        //todo: write method to write/delete the files in a certain order so that failures can be tested
+            //ATTEMPT
+            var errors = checker.CheckSingleBundleIsValid("standardLibsCdnJs");
+
+            //VERIFY
+            errors.Any().ShouldEqual(false, string.Join("\n", errors));
+        }
+
+        [Test]
+        public void TestCheckBundleFileIsNotNewerThanMinifiedFilesWithCdnOk()
+        {
+            //SETUP
+            var checker = new CheckBundles(TestFileHelpers.GetTestDataFileDirectory(), B4BSetupHelper.GetDirRelToTestDirectory("WithCdn\\"));
+
+            //ATTEMPT
+            var error = checker.CheckBundleFileIsNotNewerThanMinifiedFiles();
+
+            //VERIFY
+            error.ShouldEqual(null, error);
+        }
+
     }
 }

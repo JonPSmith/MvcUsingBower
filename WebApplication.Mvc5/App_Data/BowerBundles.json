@@ -7,6 +7,20 @@
     "lib/jquery/dist/jquery.js",
     "lib/bootstrap/dist/js/bootstrap.js"
   ],
+  "standardLibsCndJs": [
+    {
+      "development": "lib/jquery/dist/jquery.js",
+      "production": "jquery.min.js",
+      "cdnUrl": "https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js",
+      "cdnSuccessTest": "window.jQuery"
+    },
+    {
+      "development": "lib/bootstrap/dist/js/bootstrap.js",
+      "production": "bootstrap.min.js",
+      "cdnUrl": "https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js",
+      "cdnSuccessTest": "window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+    }
+  ],
   "appLibsJs": [
     "Scripts/MyScripts/*.js"
   ],
