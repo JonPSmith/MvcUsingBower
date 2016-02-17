@@ -11,12 +11,19 @@ and [Grunt](http://gruntjs.com/) for web build automation issues. This means tha
 [ASP.NET 5](https://docs.asp.net/en/latest/conceptual-overview/aspnet.html) is taking 
 so that updating to ASP.NET5 should not change the way you handle front-end code that much.
 
+**I have written an article called 
+[Converting your ASP.NET MVC5 application to use Bower, Grunt and Gulp](http://www.thereformedprogrammer.net/converting-your-asp-net-mvc5-application-to-use-bower-grunt-and-gulp/)
+which goes into much more detail on the whole conversion process. 
+Please read this for an overview.**
+
+The rest of this ReadMe file is about how to use this package if you wish to fork it.
+
 It also includes a useful library which I call *BundlerForBower*, or B4B for short.
 This provides similar features to MVC's `BundleConfig` class, but are designed specifically
 to work with Bower.
-**Full information on how to setup and use BundlerForBower is available in the 
+*Full information on how to setup and use BundlerForBower is available in the 
 [ReadMe file](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/B4BCore/README.md) 
-in the [B4BCore project](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/tree/master/B4BCore).**
+in the [B4BCore project](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/tree/master/B4BCore).*
 
 This sample application has a [article](#) which describes in detail the steps I took
 to convert a new MVC5 web application over to using Bower and Grunt.
