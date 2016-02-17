@@ -4,7 +4,7 @@
 `BundleConfig` class, but are designed specifically to work with Bower. 
 
 I recommend you look at the other 
-[ReadMe file](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/README.md)
+[ReadMe file](https://github.com/JonPSmith/MvcUsingBower/blob/master/README.md)
 for how you use Bower and Grunt/Gulp to create your production-ready CSS and JavaScript files.
 The rest of this ReadMe assumes you know about that.
 
@@ -16,18 +16,18 @@ but I haven't done that yet. I learnt that I need to use a library myself for a 
 B4B consists of three parts:
 
 1. A extension class called 
-[BowerBundlerHelper](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/Mvc5WithBowerAndGrunt/App_Start/BowerBundlerHelper.cs)
+[BowerBundlerHelper](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/App_Start/BowerBundlerHelper.cs)
 which needs to be placed in you MVC application so that it has access to various MVC features.
-2. A [BowerBundles.json](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/tree/master/Mvc5WithBowerAndGrunt/App_Data)
+2. A [BowerBundles.json](https://github.com/JonPSmith/MvcUsingBower/tree/master/WebApplication.Mvc5/App_Data)
 file that contains the list of bundles and their files. This is used both by Grunt/Gulp 
 to prepare the files and by B4B to deliver the correct files at run time.
 *Note: This file should be placed in the App_Data directory of a MVC5 project
 (not sure where to put it in ASP.NET Core 1).*
 3. A class library called 
-[B4BCore](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/tree/master/B4BCore) which the
+[B4BCore](https://github.com/JonPSmith/MvcUsingBower/tree/master/B4BCore) which the
 `BowerBundlerHelper` class uses to handling bundling.
 This class library also contains a useful class called 
-[`CheckBundles`](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/B4BCore/CheckBundles.cs)
+[`CheckBundles`](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/CheckBundles.cs)
 that is useful for checking all your bundles are up to date before your release anything to production.
 
 
@@ -133,7 +133,7 @@ Also note that the ASP.NET Core 1 version does support CSS CDNs.*
 
 #### Some notes CDN and copying production files and cachebusting
 You will see in the sample application 
-[GruntFile.js](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/Mvc5WithBowerAndGrunt/gruntfile.js)
+[GruntFile.js](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/gruntfile.js)
 file that there is a section for copying files. 
 This is needed as if the CDN fails and you have to deliver a file locally 
 (If you want to test that this works then set the `cdnUrl` ro a bad URL and you should 
@@ -152,13 +152,13 @@ say the names/locations of the directories where the minified files are found, t
 by placing a file called `BundlerForBower.json` in the MVC App_Data directory.
 
 The default values can be found in the file 
-[defaultConfig.json](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/B4BCore/Internal/defaultConfig.json).
+[defaultConfig.json](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/Internal/defaultConfig.json).
 
 You can override just the properties you want to change and the rest. See the following examples:
 
-1. Override just the name of the bundle file [see this file](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/B4BCore/Internal/defaultConfig.json)
+1. Override just the name of the bundle file [see this file](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/Internal/defaultConfig.json)
 2. Override all the properties - see 
-[ASPNET Core 1 Config/bundlerForBower.json](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/Tests/TestData/ASPNET%20Core%201%20Config/bundlerForBower.json)
+[ASPNET Core 1 Config/bundlerForBower.json](https://github.com/JonPSmith/MvcUsingBower/blob/master/Tests/TestData/ASPNET%20Core%201%20Config/bundlerForBower.json)
 
 This last example shows how you would change the setting to match what ASP.NET Core 1 would need.
 
@@ -166,7 +166,7 @@ This last example shows how you would change the setting to match what ASP.NET C
 
 When using a build tool you can forget you have made a change and forget to update the production code
 (well, I have done that!). Therefore I have provided a 
-[`CheckBundles`](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/B4BCore/CheckBundles.cs)
+[`CheckBundles`](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/CheckBundles.cs)
 that provides a comprehensive set of tests to check the bundles are correct and up to date.
 
 If you want to use this in your Unit Tests then you need to create the `CheckBundles` in such
@@ -205,9 +205,9 @@ are older than the file that defines what is in the bundle. Otherwise it returns
 the minified files that need updating.
 
 
-In addition the [Tests Project](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/tree/master/Tests)
+In addition the [Tests Project](https://github.com/JonPSmith/MvcUsingBower/tree/master/Tests)
 has some tests for the B4BCore project, including examples of 
-[`CheckBundles`](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/B4BCore/CheckBundles.cs)
+[`CheckBundles`](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/CheckBundles.cs)
 .
 
 

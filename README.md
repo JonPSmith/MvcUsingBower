@@ -22,8 +22,8 @@ It also includes a useful library which I call *BundlerForBower*, or B4B for sho
 This provides similar features to MVC's `BundleConfig` class, but are designed specifically
 to work with Bower.
 *Full information on how to setup and use BundlerForBower is available in the 
-[ReadMe file](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/B4BCore/README.md) 
-in the [B4BCore project](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/tree/master/B4BCore).*
+[ReadMe file](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/README.md) 
+in the [B4BCore project](https://github.com/JonPSmith/MvcUsingBower/tree/master/B4BCore).*
 
 This sample application has a [article](#) which describes in detail the steps I took
 to convert a new MVC5 web application over to using Bower and Grunt.
@@ -61,13 +61,13 @@ If you want to changes things then here are a few pointers:
 
 the 
 file holds lists of the CSS and JavaScript files you want to use in your application. 
-It is used by [gruntfile.js](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/Mvc5WithBowerAndGrunt/gruntfile.js)
+It is used by [gruntfile.js](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/gruntfile.js)
 when concatenating files and by 
-[BowerBundlerHelper.cs](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/Mvc5WithBowerAndGrunt/App_Start/BowerBundlerHelper.cs)
+[BowerBundlerHelper.cs](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/App_Start/BowerBundlerHelper.cs)
 when it is delivering individual files in Debug mode.
 
-The current [BowerBundles.json](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/Mvc5WithBowerAndGrunt/App_Data/BowerBundles.json)
-and gruntfile.js [gruntfile.js](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/Mvc5WithBowerAndGrunt/gruntfile.js) 
+The current [BowerBundles.json](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/App_Data/BowerBundles.json)
+and gruntfile.js [gruntfile.js](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/gruntfile.js) 
 are fairly simple and just has one CSS and three JavaScript groups of files: 
 
 1. **standardLibsJs**: which holds the standard JavaScript libraries like JQuery that rarely change
@@ -82,7 +82,7 @@ does not handle comments in JSON and fails.*
 In the article I explain that we cannot use some of the new ASP.NET5 tags so
 I had to come up with another way of delivering either single files in Development 
 mode and concatenated/minified files in Release mode.
-[BowerBundlerHelper.cs](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/Mvc5WithBowerAndGrunt/App_Start/BowerBundlerHelper.cs)
+[BowerBundlerHelper.cs](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/App_Start/BowerBundlerHelper.cs)
 is the front-end that lives in the MVC app so that it can pick up MVC features and also the debug mode.
 
 `BowerBundlerHelper.cs` is a static extension class on the MVC `HtmlHelper` class. 
@@ -98,6 +98,6 @@ optional 'forceState' parameter.
 *Note: If you don't like `BowerBundlerHelper.cs` then the article give you an alternative
 using MVC5's own `BundleConfig.cs`*
 
-## Full information on how to setup and use BundlerForBower is available in the [ReadMe file](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/blob/master/B4BCore/README.md) in the [B4BCore project](https://github.com/JonPSmith/Mvc5WithBowerAndGrunt/tree/master/B4BCore)
+## Full information on how to setup and use BundlerForBower is available in the [ReadMe file](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/README.md) in the [B4BCore project](https://github.com/JonPSmith/MvcUsingBower/tree/master/B4BCore)
 
 
