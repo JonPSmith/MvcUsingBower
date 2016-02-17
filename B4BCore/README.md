@@ -83,9 +83,6 @@ search all directories and subdirectories feature.
 ### 2. Delivery of files from Content Delivery Network (CDN), with fallback
 
 B4B can also handle the supply of JavaScript via a Content Delivery Network (CDN).
-*NOTE: At the moment I have not implemented CSS CDN support. The testing code is
-quite complex and I left it out for now. If someone wants to add then great.*
-
 You can define a CDN url, with fallback in the BowerBundles.json file using the following syntax 
 
 ```json
@@ -129,6 +126,10 @@ An example of the output of the Jquery example about would be:
 <script src='https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js'></script>
 <script>(window.jQuery||document.write(\"<script 'src=~/js/jquery.min.js?v=SnW8SeyCxQMkwmWggnI6zdSJoIVYPkVYHyM4jpW3jaQ'));</script>
 ```
+
+*NOTE: At the moment I have not implemented CSS CDN support. The testing code is
+quite complex and I left it out for now. If someone wants to add then let me know.
+Also note that the ASP.NET Core 1 version does support CSS CDNs.*
 
 #### Some notes CDN and copying production files and cachebusting
 You will see in the sample application 
