@@ -16,7 +16,8 @@ so that updating to ASP.NET5 should not change the way you handle front-end code
 which goes into much more detail on the whole conversion process. 
 Please read this for an overview.**
 
-The rest of this ReadMe file is about how to use this package if you wish to fork it.
+The rest of this ReadMe file is about how to use this package if you wish to fork it
+or download it.
 
 It also includes a useful library which I call *BundlerForBower*, or B4B for short.
 This provides similar features to MVC's `BundleConfig` class, but are designed specifically
@@ -24,9 +25,6 @@ to work with Bower.
 *Full information on how to setup and use BundlerForBower is available in the 
 [ReadMe file](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/README.md) 
 in the [B4BCore project](https://github.com/JonPSmith/MvcUsingBower/tree/master/B4BCore).*
-
-This sample application has a [article](#) which describes in detail the steps I took
-to convert a new MVC5 web application over to using Bower and Grunt.
 
 ## Points to note about this application
 
@@ -68,9 +66,12 @@ when it is delivering individual files in Debug mode.
 
 The current [BowerBundles.json](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/App_Data/BowerBundles.json)
 and gruntfile.js [gruntfile.js](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/gruntfile.js) 
-are fairly simple and just has one CSS and three JavaScript groups of files: 
+are contain just has one CSS and four JavaScript groups of files: 
 
-1. **standardLibsJs**: which holds the standard JavaScript libraries like JQuery that rarely change
+1. **mainCss**: which holds the two CSS files associated with the applciation.
+2. **standardLibsJs**: which holds the standard JavaScript libraries like JQuery that rarely change
+3. **standardLibsCndJs**: which has the same standard JavaScript libraries, but delivered
+via CDN with fallback handling if the CDN is offline.
 2. **appLibsJs**: which holds JavaScript files specifically written for this app that will change a lot.
 3. **jqueryval**: which you only include when it is needed, e.g. in views with forms in them.
 
@@ -79,7 +80,8 @@ does not handle comments in JSON and fails.*
 
 ### 2. BundlerForBower (B4B)
 
-In the article I explain that we cannot use some of the new ASP.NET5 tags so
+In [the article](http://www.thereformedprogrammer.net/converting-your-asp-net-mvc5-application-to-use-bower-grunt-and-gulp/)
+I explain that we cannot use some of the new ASP.NET5 tags so
 I had to come up with another way of delivering either single files in Development 
 mode and concatenated/minified files in Release mode.
 [BowerBundlerHelper.cs](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/App_Start/BowerBundlerHelper.cs)
@@ -98,6 +100,7 @@ optional 'forceState' parameter.
 *Note: If you don't like `BowerBundlerHelper.cs` then the article give you an alternative
 using MVC5's own `BundleConfig.cs`*
 
-## Full information on how to setup and use BundlerForBower is available in the [ReadMe file](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/README.md) in the [B4BCore project](https://github.com/JonPSmith/MvcUsingBower/tree/master/B4BCore)
+## Full information on how to setup and use BundlerForBower is available in the 
+[ReadMe file](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/README.md) in the [B4BCore project](https://github.com/JonPSmith/MvcUsingBower/tree/master/B4BCore)
 
 
