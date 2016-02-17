@@ -100,7 +100,8 @@ optional 'forceState' parameter.
 *Note: If you don't like `BowerBundlerHelper.cs` then the article give you an alternative
 using MVC5's own `BundleConfig.cs`*
 
-## Full information on how to setup and use BundlerForBower is available in the 
-[ReadMe file](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/README.md) in the [B4BCore project](https://github.com/JonPSmith/MvcUsingBower/tree/master/B4BCore)
+**Full information on how to setup and use BundlerForBower is available in the 
+[ReadMe file](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/README.md) 
+in the [B4BCore project](https://github.com/JonPSmith/MvcUsingBower/tree/master/B4BCore)**.
 
 
