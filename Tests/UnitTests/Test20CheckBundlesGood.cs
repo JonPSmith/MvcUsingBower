@@ -124,18 +124,5 @@ namespace Tests.UnitTests
             //VERIFY
             errors.Any().ShouldEqual(false, string.Join("\n", errors));
         }
-
-        [Test]
-        public void TestCheckBundleFileIsNotNewerThanMinifiedFilesWithCdnOk()
-        {
-            //SETUP
-            var checker = new CheckBundles(TestFileHelpers.GetTestDataFileDirectory(), B4BSetupHelper.GetDirRelToTestDirectory("WithCdn\\"));
-
-            //ATTEMPT
-            var error = checker.CheckBundleFileIsNotNewerThanMinifiedFiles();
-
-            //VERIFY
-            error.ShouldEqual(null, error);
-        }
     }
 }
