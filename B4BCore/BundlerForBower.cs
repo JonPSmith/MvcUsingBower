@@ -20,7 +20,9 @@ using B4BCore.Internal;
 
 namespace B4BCore
 {
-
+    /// <summary>
+    /// Used to say whether we are delivering CSS or JavaScript bundle
+    /// </summary>
     public enum CssOrJs { Css, Js }
 
     /// <summary>
@@ -28,31 +30,47 @@ namespace B4BCore
     /// </summary>
     public class BundlerForBower
     {
-        public const string B4BConfigFileName = "BundlerForBower.json";
-        private readonly string _appDataPath;
+        internal const string B4BConfigFileName = "BundlerForBower.json";
+        private readonly string _jsonDataDir;
         private readonly Func<string, string> _getActualFilePathFromVirtualPath;
 
         private readonly Func<string, string> _getContentUrl;
         private readonly RelPathSearcher _searcher;
 
-        public BundlerForBower(Func<string, string> getContentUrl, Func<string, string> getActualFilePathFromVirtualPath, string appDataPath)
+        /// <summary>
+        /// This creates the class ready for bundling
+        /// </summary>
+        /// <param name="getContentUrl">This is a function which given a path relative to the MVC project and will
+        /// return a http: url to use in the web site. In MVC5 this is provided by urlHelper.Content</param>
+        /// <param name="getActualFilePathFromVirtualPath">This is a function which given a path relative to the MVC project 
+        /// will return the absolute path. In MVC5 this is provided by System.Web.Hosting.HostingEnvironment.MapPath</param>
+        /// <param name="jsonDataDir">The absolute directory path to the folder that holds the BowerBundles.json and the 
+        /// optional BundlerForBower.json config file</param>
+        public BundlerForBower(Func<string, string> getContentUrl, Func<string, string> getActualFilePathFromVirtualPath, string jsonDataDir)
         {
             _getContentUrl = getContentUrl;
             _getActualFilePathFromVirtualPath = getActualFilePathFromVirtualPath;
-            _appDataPath = appDataPath;
+            _jsonDataDir = jsonDataDir;
             _searcher = new RelPathSearcher(_getActualFilePathFromVirtualPath);
         }
 
-        public string CalculateHtmlIncludes(string bundleName, CssOrJs cssOrJs, bool isDebug)
+        /// <summary>
+        /// This returns the appropriate html string to include in the web page such that the requested bundle will be loaded.
+        /// </summary>
+        /// <param name="bundleName"></param>
+        /// <param name="cssOrJs"></param>
+        /// <param name="inDevelopment">This controls whether we supply individual files or development mode 
+        /// or single minified files/CDNs in non-development mode</param>
+        /// <returns></returns>
+        public string CalculateHtmlIncludes(string bundleName, CssOrJs cssOrJs, bool inDevelopment)
         {
-            var config = ConfigInfo.ReadConfig(Path.Combine(_appDataPath, B4BConfigFileName));
-            var settingFilePath = Path.Combine(_appDataPath, config.BundlesFileName);
+            var config = ConfigInfo.ReadConfig(Path.Combine(_jsonDataDir, B4BConfigFileName));
+            var settingFilePath = Path.Combine(_jsonDataDir, config.BundlesFileName);
             var reader = new ReadBundleFile(settingFilePath);
 
             var fileTypeInfo = config.GetFileTypeData(cssOrJs);
 
-
-            if (isDebug)
+            if (inDevelopment)
             {
                 var sb = new StringBuilder();
                 //we send the individual files as found in the bundle json file
@@ -90,6 +108,9 @@ namespace B4BCore
             return sb.ToString();
         }
 
+        //------------------------------------------------------------------
+        //private methods
+
         private string FormSingleMinifiedFileInclude(string bundleName, CssOrJs cssOrJs, FileTypeConfigInfo fileTypeInfo)
         {
             var relFilePath = $"~/{fileTypeInfo.Directory}{bundleName}.min.{cssOrJs.ToString().ToLowerInvariant()}";
@@ -104,7 +125,6 @@ namespace B4BCore
             }
             return htmlLink;
         }
-
 
         private static string GetChecksum(string file)
         {
