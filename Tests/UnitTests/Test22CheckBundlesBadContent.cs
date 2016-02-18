@@ -18,6 +18,13 @@ namespace Tests.UnitTests
 {
     public class Test22CheckBundlesBadContent
     {
+
+        [TestFixtureTearDown]
+        public void FixtureTearDown()
+        {
+            "BowerBundles".SetupFiles();    //we wipe all the temp files so that git doesn't keep trying to save them
+        }
+
         [Test]
         public void Check1CheckBundlesHelperSetsUpFileOk()
         {
@@ -232,6 +239,51 @@ namespace Tests.UnitTests
             //VERIFY
             errors.Count.ShouldEqual(1);
             errors.First().ShouldEqual("The following files in 'production' were missing in the bundles called 'cdnJs':\n - js/myfile.min.js");
+        }
+
+        //------------------------------------------------------------------
+        //now the CheckBundleFileIsNotNewerThanMinifiedFiles
+
+        [Test]
+        public void TestCheckBundleFileIsNotNewerThanMinifiedFilesAllOk()
+        {
+            //SETUP
+            "BowerBundles, lib/myfile.min.js, js/simpleJs.min.js".SetupFiles();
+            var checker = CheckBundlesHelper.GetCheckBundlesWithCorrectDirs();
+
+            //ATTEMPT
+            var errors = checker.CheckBundleFileIsNotNewerThanMinifiedFiles();
+
+            //VERIFY
+            errors.ShouldEqual(null);
+        }
+
+        [Test]
+        public void TestCheckBundleFileIsNotNewerThanMinifiedFilesBadDateOk()
+        {
+            //SETUP
+            "lib/myfile.min.js, js/simpleJs.min.js, BowerBundles".SetupFiles();
+            var checker = CheckBundlesHelper.GetCheckBundlesWithCorrectDirs();
+
+            //ATTEMPT
+            var errors = checker.CheckBundleFileIsNotNewerThanMinifiedFiles();
+
+            //VERIFY
+            errors.ShouldEqual("The following minified files have not been updated since the change in the bundle file:\n - js/simpleJs.min.js");
+        }
+
+        [Test]
+        public void TestCheckBundleFileIsNotNewerThanMinifiedFilesMissingFileOk()
+        {
+            //SETUP
+            "BowerBundles, lib/myfile.min.js".SetupFiles();
+            var checker = CheckBundlesHelper.GetCheckBundlesWithCorrectDirs();
+
+            //ATTEMPT
+            var errors = checker.CheckBundleFileIsNotNewerThanMinifiedFiles();
+
+            //VERIFY
+            errors.ShouldEqual("The following minified files have not been updated since the change in the bundle file:\n - js/simpleJs.min.js");
         }
     }
 }
