@@ -248,7 +248,7 @@ namespace Tests.UnitTests
         public void TestCheckBundleFileIsNotNewerThanMinifiedFilesAllOk()
         {
             //SETUP
-            "BowerBundles, lib/myfile.min.js, js/simpleJs.min.js".SetupFiles();
+            "BowerBundles, js/simpleJs.min.js".SetupFiles();
             var checker = CheckBundlesHelper.GetCheckBundlesWithCorrectDirs();
 
             //ATTEMPT
@@ -262,7 +262,7 @@ namespace Tests.UnitTests
         public void TestCheckBundleFileIsNotNewerThanMinifiedFilesBadDateOk()
         {
             //SETUP
-            "lib/myfile.min.js, js/simpleJs.min.js, BowerBundles".SetupFiles();
+            "js/simpleJs.min.js, BowerBundles".SetupFiles();
             var checker = CheckBundlesHelper.GetCheckBundlesWithCorrectDirs();
 
             //ATTEMPT
@@ -276,7 +276,7 @@ namespace Tests.UnitTests
         public void TestCheckBundleFileIsNotNewerThanMinifiedFilesMissingFileOk()
         {
             //SETUP
-            "BowerBundles, lib/myfile.min.js".SetupFiles();
+            "BowerBundles".SetupFiles();
             var checker = CheckBundlesHelper.GetCheckBundlesWithCorrectDirs();
 
             //ATTEMPT
