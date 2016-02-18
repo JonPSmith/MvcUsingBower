@@ -62,7 +62,7 @@
     <Compile Include="UnitTests\Test05RelPathSearcher.cs" />
     <Compile Include="UnitTests\Test10BundlerForBowerMvc5.cs" />
     <Compile Include="UnitTests\Test11BundlerForBowerAspNetCore1.cs" />
-    <Compile Include="UnitTests\Test20CheckBundlesGood.cs" />
+    <Compile Include="UnitTests\Test30CheckBundlesMvc.cs" />
     <Compile Include="UnitTests\Test21CheckBundlesBadFormat.cs" />
     <Compile Include="UnitTests\Test22CheckBundlesBadContent.cs" />
     <Compile Include="UnitTests\Test90Performance.cs" />
