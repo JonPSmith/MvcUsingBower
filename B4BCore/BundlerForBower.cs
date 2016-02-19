@@ -40,17 +40,20 @@ namespace B4BCore
         /// <summary>
         /// This creates the class ready for bundling
         /// </summary>
-        /// <param name="getContentUrl">This is a function which given a path relative to the MVC project and will
-        /// return a http: url to use in the web site. In MVC5 this is provided by urlHelper.Content</param>
-        /// <param name="getActualFilePathFromVirtualPath">This is a function which given a path relative to the MVC project 
-        /// will return the absolute path. In MVC5 this is provided by System.Web.Hosting.HostingEnvironment.MapPath</param>
         /// <param name="jsonDataDir">The absolute directory path to the folder that holds the BowerBundles.json and the 
-        /// optional BundlerForBower.json config file</param>
-        public BundlerForBower(Func<string, string> getContentUrl, Func<string, string> getActualFilePathFromVirtualPath, string jsonDataDir)
+        ///     optional BundlerForBower.json config file</param>
+        /// <param name="getContentUrl">This is a function which given a path relative to the MVC project and will
+        ///     return a http: url to use in the web site. In MVC5 this is provided by urlHelper.Content</param>
+        /// <param name="getActualFilePathFromVirtualPath">This is a function which given a path relative to the MVC project 
+        ///     will return the absolute path. In MVC5 this is provided by System.Web.Hosting.HostingEnvironment.MapPath.
+        ///     Can be null, in which case no checksum can be used
+        /// </param>
+        public BundlerForBower(string jsonDataDir, Func<string, string> getContentUrl, Func<string, string> getActualFilePathFromVirtualPath = null)
         {
-            _getContentUrl = getContentUrl;
-            _getActualFilePathFromVirtualPath = getActualFilePathFromVirtualPath;
             _jsonDataDir = jsonDataDir;
+            _getContentUrl = getContentUrl;
+            _getActualFilePathFromVirtualPath = getActualFilePathFromVirtualPath ??
+                                                (s => { throw new NotImplementedException("cachebuster parameters should not be allowed in this evironment.");});
             _searcher = new RelPathSearcher(_getActualFilePathFromVirtualPath);
         }
 

@@ -79,7 +79,7 @@ namespace Tests.UnitTests
             //ATTEMPT
             using (new TimerToConsole("create BundlerForBower"))
             {
-                var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"));
+                var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath());
             }
 
             //VERIFY
@@ -89,7 +89,7 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerCssDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"));
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath());
 
             //ATTEMPT
             using (new TimerToConsole("CalculateHtmlIncludes Debug"))
@@ -104,7 +104,7 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerCssNonDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"));
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath());
 
             //ATTEMPT
             using (new TimerToConsole("CalculateHtmlIncludes NonDebug"))

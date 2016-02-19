@@ -7,13 +7,22 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace WebApp.ASPNETCore1
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        /// <summary>
+        /// This contains the absolute directory of the ASP.NET web application
+        /// </summary>
+        public static string ApplicationBasePath;
+
+        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnvironment)
         {
+
+            ApplicationBasePath = appEnvironment.ApplicationBasePath;
+
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
