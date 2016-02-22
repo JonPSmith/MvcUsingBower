@@ -18,9 +18,13 @@ B4B consists of three parts:
 1. A extension class called 
 [BowerBundlerHelper](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/App_Start/BowerBundlerHelper.cs)
 which needs to be placed in you MVC application so that it has access to various MVC features.
+I have placed this in the MVC's  directory as it replaces `BundlesConfig.cs`.  
+*Note: this isn't really the right directory to put this class as it doesn't need any actions at startup.
+However putting it in the `App_Start` directory in place of `BundlesConfig.cs` makes the change pretty obvious.
+You can place this file anywhere inside your MVC application.*
 2. A [BowerBundles.json](https://github.com/JonPSmith/MvcUsingBower/tree/master/WebApplication.Mvc5/App_Data)
 file that contains the list of bundles and their files. This is used both by Grunt/Gulp 
-to prepare the files and by B4B to deliver the correct files at run time.
+to prepare the files and by B4B to deliver the correct files at run time.  
 *Note: This file should be placed in the App_Data directory of a MVC5 project
 (not sure where to put it in ASP.NET Core 1).*
 3. A class library called 
@@ -28,7 +32,8 @@ to prepare the files and by B4B to deliver the correct files at run time.
 `BowerBundlerHelper` class uses to handling bundling.
 This class library also contains a useful class called 
 [`CheckBundles`](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/CheckBundles.cs)
-that is useful for checking all your bundles are up to date before your release anything to production.
+that is useful for checking all your bundles are up to date before your release anything to production.  
+*Note: see section at the end of this ReadMe file for more on testing*
 
 
 ## Using BowerBundlerHelper to deliver bundles
@@ -79,6 +84,60 @@ but the order is then dependant on the name and some (many) files need to be loa
 Directory searches can included, e.g `"Scripts/*/*.js"`,
 but at the moment I have not implemented the Grunt/Gulp's /**/
 search all directories and subdirectories feature.
+
+#### Steps to add a new files bundle
+
+Here are the steps you would need to do to add a new bundle, which we will call **MyNewBundle** 
+that contains two files: one called "Scripts/MyScript1.js" and the other called "Scripts/MyScript2.js".
+
+  a. Add a bundle called **MyNewBundle** to the BowerBundles.json file, e.g.
+
+```json
+{
+  "MyNewBundle": [
+    "Scripts/MyScript1.js",
+    "Scripts/MyScript2.js"
+  ],
+  //... rest of BowerBundles.json
+}
+```
+
+  b. Update the **gruntfile.js** build script to include an extra concat and uglify task 
+(or cssmin if your bundle was of CSS files), e.g.
+
+```javascript
+//...
+concat: {
+    MyNewBundle: {
+        src: new Array('<%= properties.MyNewBundle %>'),
+        dest: 'js/MyNewBundle.js'
+    },
+    //... other concat tasks
+},
+
+//...
+
+uglify: {
+    MyNewBundle: {
+        src: 'js/MyNewBundle.js',
+        dest: 'js/MyNewBundle.min.js'
+    },
+    //... other uglify tasks
+},
+```
+
+c. Update the Update the **gruntfile.js** build task to include the **MyNewBundle** tasks
+
+```javascript
+    grunt.registerTask('build:js', [
+        'concat:MyNewBundle', 'concat:standardLibsJs', 'concat:appLibsJs', 'concat:jqueryval',
+        'uglify:MyNewBundle', 'uglify:standardLibsJs', 'uglify:appLibsJs', 'uglify:jqueryval']);
+
+```
+d. Run **build:js** to create the concatenated and minified files.  
+e. Include the command `@Html.HtmlScriptsCached("MyNewBundle")` in one of your
+MVC .cshtml files, say _Layout.cshtml if you want the library available in every
+page, or in the specific page(s) that need it.
 
 ### 2. Delivery of files from Content Delivery Network (CDN), with fallback
 
@@ -131,7 +190,7 @@ An example of the output of the Jquery example about would be:
 quite complex and I left it out for now. If someone wants to add then let me know.
 Also note that the ASP.NET Core 1 version does support CSS CDNs.*
 
-#### Some notes CDN and copying production files and cachebusting
+#### <a name="NotesOnCdn"></a>Some notes CDN and copying production files and cachebusting
 You will see in the sample application 
 [GruntFile.js](https://github.com/JonPSmith/MvcUsingBower/blob/master/WebApplication.Mvc5/gruntfile.js)
 file that there is a section for copying files. 
@@ -143,6 +202,44 @@ The other point about copying these files is that you can give them a name that 
 version number. If you do this then you can turn off cachebusting for CDN fallback files
 by overriding the `JsCdnHtmlFormatString` property using your own bundlerForBower.json
 (see next section) and removing the string `?v={cachebuster}` from the normal string.
+
+#### Steps to add a CDN files bundle
+
+Here are the steps you would need to do to add a new bundle, which we will call **MyCDNBundle** 
+that contains two files: one called "Scripts/MyScript1.js" and the other called "Scripts/MyScript2.js".
+
+a. Add a bundle called **MyCDNBundle** to the BowerBundles.json file. 
+The format is as shown in point 2 above.
+
+b. Update the **gruntfile.js** copy the minified file out of the library, which is not published to
+the live site, into a suitable directory that is published. In this case I use js/.  
+
+*Notes:* 
+
+ 1. You need separate copy for each file in the CDN bundle. 
+ 2. You only need to do the copy if the library changes.
+ 3. See [some notes on CND](#NotesOnCdn) 
+about naming the files with the version instead of using cachebusting.
+
+The build script to do this looks like this:
+
+```javascript
+
+copy: {
+    jQueryCdn: {
+        src: 'lib/jquery/dist/jquery.min.js',
+        dest: 'js/jquery.min.js'
+    },
+    bootstrapCdn: {
+        src: 'lib/bootstrap/dist/js/bootstrap.min.js',
+        dest: 'js/bootstrap.min.js'
+    },
+    //... other copy tasks, like coping the fonts
+```
+
+c. Run each of the Grunt **copy:???** tasks you created in step b.  
+e. Include the command `@Html.HtmlScriptsCached("MyCDNBundle")` in one of your
+MVC .cshtml files - most likely _Layout.cshtml.
 
 
 ## Optional bundlerForBower.json file format
@@ -174,7 +271,7 @@ a way that it knows where you MVC project is. If you are using the standard setu
 ctor can work this out by giving a type that is in your MVC application, e.g.
 
 ```csharp
-var checker = new CheckBundles(typeof(HomeController));
+var checker = new CheckBundles(typeof(BowerBundlerHelper));
 ```
 
 *Note: there are other version of the `CheckBundles` ctor if you have an unusual setup. 
@@ -205,9 +302,8 @@ are older than the file that defines what is in the bundle. Otherwise it returns
 the minified files that need updating.
 
 
-In addition the [Tests Project](https://github.com/JonPSmith/MvcUsingBower/tree/master/Tests)
-has some tests for the B4BCore project, including examples of 
-[`CheckBundles`](https://github.com/JonPSmith/MvcUsingBower/blob/master/B4BCore/CheckBundles.cs)
+You can see an example of using these commands in an NUnit based Unit Test
+in [this Unit Test class](https://github.com/JonPSmith/MvcUsingBower/blob/master/Tests/UnitTests/Test30CheckBundlesMvc.cs)
 .
 
 
