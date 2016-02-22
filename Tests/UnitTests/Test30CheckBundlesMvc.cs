@@ -32,7 +32,7 @@ namespace Tests.UnitTests
             var errors = checker.CheckAllBundlesAreValid();
 
             //VERIFY
-            errors.Any().ShouldEqual(false, string.Join("\n", errors));
+            Assert.IsFalse(errors.Any(), string.Join("\n", errors));
         }
 
         [Test]
@@ -45,22 +45,8 @@ namespace Tests.UnitTests
             var error = checker.CheckBundleFileIsNotNewerThanMinifiedFiles();
 
             //VERIFY
-            error.ShouldEqual(null, error);
+            Assert.IsNull(error, error);
         }
 
-        //------------------------------------------------------------
-        //Check with cdns (already checked by CheckAllBundlesAreValid, but done again to ensure there is no bugs in the checking code
-
-        [Test]
-        public void TestCheckSingleBundleIsUpToDateWithCdnOk()
-        {
-            var checker = new CheckBundles(typeof(BowerBundlerHelper));
-
-            //ATTEMPT
-            var errors = checker.CheckSingleBundleIsValid("standardLibsCndJs");
-
-            //VERIFY
-            errors.Any().ShouldEqual(false, string.Join("\n", errors));
-        }
     }
 }
