@@ -52,15 +52,15 @@ optional 'forceState' parameter.
 ## Using BowerBundleHelper to deliver static files with cachebuster added
 
 When delivering static files, e.g. images, you need to think about what happens if you change the
-image. The problem is if you change the image content but not its name then is caching is turned on
-the user's browser will use the old image, not the new image. 
+file content. The problem is if you change the file content but not its name then if caching is turned on
+the user's browser will use the old file content, not the new file content. 
 
-The `BowerBundlerHelper` has a command to turn a normal file reference into one containing a cahce busting
+The `BowerBundlerHelper` has a command to turn a normal file reference into one containing a cache busting
 value. For instance for an image you would use something like this in your razor view:
 
 `<img src='@Html.AddCacheBusterCached("~/images/annoyed-cat.jpg")' />`
 
-*See more in [Adding a cachebuster to other static files](#Adding-a-cachebuster-to-other-static-files) 
+*See more in [Adding a cachebuster to other static files](#adding-a-cachebuster-to-other-static-files) 
 section.*
 
 ## BowerBundles.json file format
