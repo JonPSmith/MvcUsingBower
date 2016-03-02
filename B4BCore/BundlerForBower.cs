@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using B4BCore.Internal;
 
@@ -32,26 +31,30 @@ namespace B4BCore
     {
         internal const string B4BConfigFileName = "BundlerForBower.json";
         private readonly string _jsonDataDir;
-        private readonly Func<string, string> _getActualFilePathFromVirtualPath;
-
         private readonly Func<string, string> _getContentUrl;
+        private readonly Func<string, string> _getChecksumFromRelPath;
+
         private readonly RelPathSearcher _searcher;
 
         /// <summary>
         /// This creates the class ready for bundling
         /// </summary>
-        /// <param name="getContentUrl">This is a function which given a path relative to the MVC project and will
-        /// return a http: url to use in the web site. In MVC5 this is provided by urlHelper.Content</param>
-        /// <param name="getActualFilePathFromVirtualPath">This is a function which given a path relative to the MVC project 
-        /// will return the absolute path. In MVC5 this is provided by System.Web.Hosting.HostingEnvironment.MapPath</param>
         /// <param name="jsonDataDir">The absolute directory path to the folder that holds the BowerBundles.json and the 
-        /// optional BundlerForBower.json config file</param>
-        public BundlerForBower(Func<string, string> getContentUrl, Func<string, string> getActualFilePathFromVirtualPath, string jsonDataDir)
+        ///     optional BundlerForBower.json config file</param>
+        /// <param name="getContentUrl">This is a function which given a path relative to the MVC project and will
+        ///     return a http: url to use in the web site. In MVC5 this is provided by urlHelper.Content</param>
+        /// <param name="getAbsPathFromVirtualPath">This is a function which given a path relative to the MVC project 
+        ///     will return the absolute path. In MVC5 this is provided by System.Web.Hosting.HostingEnvironment.MapPath.</param>
+        /// <param name="getChecksumFromRelPath">This is a function returns a checksum of a file referred to via an relative path
+        ///     Can be null, in which case no checksum can be used.</param>
+        public BundlerForBower(string jsonDataDir, Func<string, string> getContentUrl, Func<string, string> getAbsPathFromVirtualPath,
+            Func<string, string> getChecksumFromRelPath)
         {
-            _getContentUrl = getContentUrl;
-            _getActualFilePathFromVirtualPath = getActualFilePathFromVirtualPath;
             _jsonDataDir = jsonDataDir;
-            _searcher = new RelPathSearcher(_getActualFilePathFromVirtualPath);
+            _getContentUrl = getContentUrl;
+            _getChecksumFromRelPath = getChecksumFromRelPath ??
+                (s => { throw new NotImplementedException("cachebuster parameters should not be allowed in this evironment.");});
+            _searcher = new RelPathSearcher(getAbsPathFromVirtualPath);
         }
 
         /// <summary>
@@ -103,7 +106,7 @@ namespace B4BCore
                 var relFilePath = $"~/{fileTypeInfo.Directory}{cdnLink.Production}";
                 var httpFileUrl = _getContentUrl(relFilePath);
                 sb.AppendLine(cdnLink.BuildCdnIncludeString(fileTypeInfo.CdnHtmlFormatString, httpFileUrl,
-                    () => GetChecksum(_getActualFilePathFromVirtualPath(relFilePath))));
+                    () => _getChecksumFromRelPath(relFilePath)));
             }
             return sb.ToString();
         }
@@ -118,23 +121,13 @@ namespace B4BCore
             var htmlLink = fileTypeInfo.NonDebugHtmlFormatString.Replace(FileTypeConfigInfo.FileUrlParam, fileUrl);
             if (fileTypeInfo.NonDebugHtmlFormatString.Contains(FileTypeConfigInfo.CachebusterParam))
             {
-                //I use a SHA256 Hash instead of the file datetime as it allows you to use the general Grunt 'build'
-                //command, which rebuilds everything, and the cache buster won't change unless the content changes.
-                var cacheBusterValue = GetChecksum(_getActualFilePathFromVirtualPath(relFilePath));
+
+                var cacheBusterValue = _getChecksumFromRelPath(relFilePath);
                 htmlLink = htmlLink.Replace(FileTypeConfigInfo.CachebusterParam, cacheBusterValue);
             }
             return htmlLink;
         }
 
-        private static string GetChecksum(string file)
-        {
-            using (var stream = File.OpenRead(file))
-            {
-                var sha = new SHA256Managed();
-                byte[] checksum = sha.ComputeHash(stream);
-                var base64 = Convert.ToBase64String(checksum);
-                return base64.Replace("/", "_").Replace("+", "-").Substring(0, base64.Length - 1);    //make valid HTTP parameter string
-            }
-        }
+
     }
 }

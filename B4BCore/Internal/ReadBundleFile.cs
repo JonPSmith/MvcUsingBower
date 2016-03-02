@@ -30,7 +30,7 @@ namespace B4BCore.Internal
             if (Path.GetExtension(bundleFilePath) != ".json")
                 throw new ArgumentException("This needs a json file to read.");
             if (!File.Exists(bundleFilePath))
-                throw new FileNotFoundException(
+                throw new System.IO.FileNotFoundException(
                     $"We could not find the bundle file using the file path {bundleFilePath}");
 
             _settings = JObject.Parse(File.ReadAllText(bundleFilePath));

@@ -1,8 +1,8 @@
 ﻿#region licence
 // ======================================================================================
-// Mvc5UsingBower - An example+library to allow an MVC project to use Bower and Grunt
+// MvcUsingBower - An example+library to allow an MVC project to use Bower and Grunt
 // Filename: BowerBundlerHelper.cs
-// Date Created: 2016/02/17
+// Date Created: 2016/02/19
 // 
 // Under the MIT License (MIT)
 // 
@@ -12,13 +12,16 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.IO;
-using System.Security.Cryptography;
-using System.Web.Mvc;
-using B4BCore;
+using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Rendering;
 
-namespace WebApplication.Mvc5
-{
+namespace WebApp.ASPNETCore1.B4BFiles
+{ 
+    /// <summary>
+    /// COPY OF enum from original BowerBundlerHelper
+    /// </summary>
+    public enum CssOrJs { Css, Js }
+
     /// <summary>
     /// This class contains extention methods to provide a the inclusings of CSS and JavaScript files in your views
     /// 1) @Html.HtmlCssCached("bundleName") is equivalent to @Styles.Render("~/Content/bundleName")
@@ -38,58 +41,40 @@ namespace WebApplication.Mvc5
     ///    You can turn off caching by setting the forceState parameter in each methods to true.
     /// Finally it is very tempting to add comments to the settings.json file. While Json.Net handles comments Grunt doesn't, and fails silently!
     /// </summary>
-    public static class BowerBundlerHelper
+    public static class BowerBundlerHelperDnx
     {
-        private static readonly ConcurrentDictionary<string, MvcHtmlString> IncludeCache = new ConcurrentDictionary<string, MvcHtmlString>();
+        private static readonly ConcurrentDictionary<string, HtmlString> IncludeCache = new ConcurrentDictionary<string, HtmlString>();
 
         /// <summary>
         /// This returns the CSS links using caching if forceState is null
         /// Note: this assumes that the CSS minified file is in the directory "~/css/"
         /// </summary>
-        /// <param name="helper"></param>
+        /// <param name="urlHelper"></param>
         /// <param name="bundleName">The name of the setting.json property containing the list of Css file to include. 
         /// defaults to main Css file</param>
         /// <param name="forceState">if not null then true forces into debug state and false forces production state</param>
         /// <returns></returns>
-        public static MvcHtmlString HtmlCssCached(this HtmlHelper helper, string bundleName, bool? forceState = null)
+        public static HtmlString HtmlCssCached(this IUrlHelper urlHelper, string bundleName, bool? forceState = null)
         {
             return (forceState == null)
-                ? IncludeCache.GetOrAdd(bundleName, setup => CreateHtmlIncludes(helper, bundleName, CssOrJs.Css, forceState))
-                : CreateHtmlIncludes(helper, bundleName, CssOrJs.Css, forceState);
+                ? IncludeCache.GetOrAdd(bundleName, setup => CreateHtmlIncludes(urlHelper, bundleName, CssOrJs.Css, forceState))
+                : CreateHtmlIncludes(urlHelper, bundleName, CssOrJs.Css, forceState);
         }
 
         /// <summary>
         /// This returns the script includes for a specific group using caching if forceState is null
         /// Note: this assumes that the JavaScript minified file is in the directory "~/js/"
         /// </summary>
-        /// <param name="helper"></param>
+        /// <param name="urlHelper"></param>
         /// <param name="bundleName">The name of the setting.json property containing the list of JavaScript file to include. 
         /// defaults to main js file</param>
         /// <param name="forceState">if not null then true forces into debug state and false forces production state</param>
         /// <returns></returns>
-        public static MvcHtmlString HtmlScriptsCached(this HtmlHelper helper, string bundleName, bool? forceState = null)
+        public static HtmlString HtmlScriptsCached(this IUrlHelper urlHelper, string bundleName, bool? forceState = null)
         {
             return (forceState == null)
-                ? IncludeCache.GetOrAdd(bundleName, setup => CreateHtmlIncludes(helper, bundleName, CssOrJs.Js, forceState))
-                : CreateHtmlIncludes(helper, bundleName, CssOrJs.Js, forceState);
-        }
-
-        /// <summary>
-        /// This calculate a checksum based on the content of the file. It actually uses a SHA256 Hash.
-        /// This is heplful as it allows you to use the general Grunt 'build'command, which rebuilds everything, 
-        /// and the cache buster won't change unless the content changes.
-        /// </summary>
-        /// <param name="absFilePath"></param>
-        /// <returns>a checksum string which is http safe</returns>
-        public static string GetChecksumBasedOnFileContent(string absFilePath)
-        {
-            using (var stream = File.OpenRead(absFilePath))
-            {
-                var sha = new SHA256Managed();
-                byte[] checksum = sha.ComputeHash(stream);
-                var base64 = Convert.ToBase64String(checksum);
-                return base64.Replace("/", "_").Replace("+", "-").Substring(0, base64.Length - 1);    //make valid HTTP parameter string
-            }
+                ? IncludeCache.GetOrAdd(bundleName, setup => CreateHtmlIncludes(urlHelper, bundleName, CssOrJs.Js, forceState))
+                : CreateHtmlIncludes(urlHelper, bundleName, CssOrJs.Js, forceState);
         }
 
         //---------------------------------------
@@ -98,12 +83,12 @@ namespace WebApplication.Mvc5
         /// <summary>
         /// This returns the html to include either CSS or JavaScript files
         /// </summary>
-        /// <param name="helper"></param>
+        /// <param name="urlHelper"></param>
         /// <param name="bundleName">The name of the bundle property and the name of the minified file</param>
         /// <param name="cssOrJs">This says if its css or javascript. NOTE: the enum string is used as the dir and the file type</param>
         /// <param name="forceState">if not null then true forces into debug state and false forces production state</param>
         /// <returns></returns>
-        private static MvcHtmlString CreateHtmlIncludes(this HtmlHelper helper, string bundleName, CssOrJs cssOrJs, bool? forceState = null)
+        private static HtmlString CreateHtmlIncludes(this IUrlHelper urlHelper, string bundleName, CssOrJs cssOrJs, bool? forceState = null)
         {
             var isDebug = false;
 #if DEBUG
@@ -112,16 +97,19 @@ namespace WebApplication.Mvc5
             if (forceState != null)
                 isDebug = (bool)forceState;
 
-            var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
-            var bundler = new BundlerForBower(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), 
-                urlHelper.Content, System.Web.Hosting.HostingEnvironment.MapPath, GetChecksumFromRelPath);
-
-            return new MvcHtmlString(bundler.CalculateHtmlIncludes(bundleName, cssOrJs, isDebug));
+            throw new NotImplementedException();
+            //var bundler = new BundlerForBowerDnx(GetAbsDataDirectory(), urlHelper.Content);
+            //return new HtmlString(bundler.CalculateHtmlIncludes(bundleName, cssOrJs, isDebug));
         }
 
-        private static string GetChecksumFromRelPath(string fileRelPath)
+        /// <summary>
+        /// This is equivalent to MVC5's AppDomain.CurrentDomain.GetData("DataDirectory").ToString()
+        /// This gets the absolute path to the directory containing the B4B files
+        /// </summary>
+        /// <returns></returns>
+        private static string GetAbsDataDirectory()
         {
-            return GetChecksumBasedOnFileContent(System.Web.Hosting.HostingEnvironment.MapPath(fileRelPath));
+            return null;
         }
     }
 }

@@ -23,7 +23,8 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerCssDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower( s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"));
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"), s => "url:" + s.Substring(2), 
+                B4BSetupHelper.GetActualFilePathFromVirtualPath(), null);
 
             //ATTEMPT
             var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, true);
@@ -39,7 +40,8 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerCssNonDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"));
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"), s => "url:" + s.Substring(2), 
+                B4BSetupHelper.GetActualFilePathFromVirtualPath(), null);
 
             //ATTEMPT
             var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, false);
@@ -53,7 +55,8 @@ namespace Tests.UnitTests
         {
             //SETUP 
 
-            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"));
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"), s => "url:" + s.Substring(2), 
+                B4BSetupHelper.GetActualFilePathFromVirtualPath(), null);
 
             //ATTEMPT
             var output = b4b.CalculateHtmlIncludes("appLibsJs", CssOrJs.Js, true);
@@ -70,7 +73,8 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerJsNonDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"));
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"), s => "url:" + s.Substring(2), 
+                B4BSetupHelper.GetActualFilePathFromVirtualPath(), null);
 
             //ATTEMPT
             var output = b4b.CalculateHtmlIncludes("appLibsJs", CssOrJs.Js, false);
@@ -86,7 +90,8 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerWithCdnJsDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"));
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"), s => "url:" + s.Substring(2), 
+                B4BSetupHelper.GetActualFilePathFromVirtualPath(), null);
 
             //ATTEMPT
             var output = b4b.CalculateHtmlIncludes("standardLibsCndJs", CssOrJs.Js, true);
@@ -102,7 +107,8 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerWithCdnJsNonDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"));
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"), s => "url:" + s.Substring(2), 
+                B4BSetupHelper.GetActualFilePathFromVirtualPath(), null);
 
             //ATTEMPT
             var output = b4b.CalculateHtmlIncludes("standardLibsCndJs", CssOrJs.Js, false);
@@ -118,7 +124,8 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerWithCdnCssDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"));
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"), s => "url:" + s.Substring(2), 
+                B4BSetupHelper.GetActualFilePathFromVirtualPath(), null);
 
             //ATTEMPT
             var output = b4b.CalculateHtmlIncludes("bootstrapCdnCss", CssOrJs.Css, true);
@@ -133,7 +140,8 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerWithCdnCssNonDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(s => "url:" + s.Substring(2), B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"));
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"), s => "url:" + s.Substring(2), 
+                B4BSetupHelper.GetActualFilePathFromVirtualPath(), null);
 
             //ATTEMPT
             var output = b4b.CalculateHtmlIncludes("bootstrapCdnCss", CssOrJs.Css, false);
