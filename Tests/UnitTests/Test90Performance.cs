@@ -10,10 +10,12 @@
 // ======================================================================================
 #endregion
 
+using System.IO;
 using B4BCore;
 using B4BCore.Internal;
 using NUnit.Framework;
 using Tests.Helpers;
+using WebApplication.Mvc5;
 
 namespace Tests.UnitTests
 {
@@ -113,6 +115,23 @@ namespace Tests.UnitTests
             using (new TimerToConsole("CalculateHtmlIncludes NonDebug"))
             {
                 var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, false);
+            }
+
+            //VERIFY
+        }
+
+        [Test]
+        public void TestGetChecksumOk()
+        {
+            //SETUP 
+            var mvc5ImagePath = Path.Combine(TestFileHelpers.GetSolutionDirectory(),
+                "WebApplication.Mvc5\\images\\annoyed-cat.jpg");
+            var fileSize = File.ReadAllBytes(mvc5ImagePath).Length;
+
+            //ATTEMPT
+            using (new TimerToConsole($"GetChecksumBasedOnFileContent - file size {fileSize:#,###} bytes"))
+            {
+                var output = BowerBundlerHelper.GetChecksumBasedOnFileContent(mvc5ImagePath);
             }
 
             //VERIFY

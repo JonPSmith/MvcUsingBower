@@ -29,6 +29,11 @@ namespace B4BCore.Internal
         public string BundlesFileName { get; set; }
 
         /// <summary>
+        /// This holds the string for adding a cachebuster value to a static file
+        /// </summary>
+        public string StaticFileCaching { get; set; }
+
+        /// <summary>
         /// This holds the Directory path of where the concatenated and minified files are
         /// </summary>
         public string JsDirectory { get; set; }
@@ -105,7 +110,7 @@ namespace B4BCore.Internal
 
         public override string ToString()
         {
-            return $"BundlesFileName: {BundlesFileName}, JsDirectory: {JsDirectory}, JsDebugHtmlFormatString: {JsDebugHtmlFormatString}, JsNonDebugHtmlFormatString: {JsNonDebugHtmlFormatString}, JsCdnHtmlFormatString: {JsCdnHtmlFormatString}, CssDirectory: {CssDirectory}, CssDebugHtmlFormatString: {CssDebugHtmlFormatString}, CssNonDebugHtmlFormatString: {CssNonDebugHtmlFormatString}, CssCdnHtmlFormatString: {CssCdnHtmlFormatString}";
+            return $"BundlesFileName: {BundlesFileName}, StaticFileCaching: {StaticFileCaching}, JsDirectory: {JsDirectory}, JsDebugHtmlFormatString: {JsDebugHtmlFormatString}, JsNonDebugHtmlFormatString: {JsNonDebugHtmlFormatString}, JsCdnHtmlFormatString: {JsCdnHtmlFormatString}, CssDirectory: {CssDirectory}, CssDebugHtmlFormatString: {CssDebugHtmlFormatString}, CssNonDebugHtmlFormatString: {CssNonDebugHtmlFormatString}, CssCdnHtmlFormatString: {CssCdnHtmlFormatString}";
         }
 
 

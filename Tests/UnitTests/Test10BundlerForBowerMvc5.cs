@@ -148,5 +148,22 @@ namespace Tests.UnitTests
             lines[0].ShouldEqual("<script src='https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js'></script><script>(window.jQuery||document.write(\"\\x3Cscript src='url:js/jquery.min.js?v=SnW8SeyCxQMkwmWggnI6zdSJoIVYPkVYHyM4jpW3jaQ'\\x3C/script>\"));</script>\r");
             lines[1].ShouldEqual("<script src='https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js'></script><script>(window.jQuery && window.jQuery.fn && window.jQuery.fn.modal||document.write(\"\\x3Cscript src='url:js/bootstrap.min.js?v=SnW8SeyCxQMkwmWggnI6zdSJoIVYPkVYHyM4jpW3jaQ'\\x3C/script>\"));</script>\r");
         }
+
+        //-----------------------------------------------------------------------------
+        //now static file cachebuster
+
+        [Test]
+        public void TestBundlerForBowerFormStaticFileWithCacheBusterOk()
+        {
+            //SETUP 
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2),
+                B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
+
+            //ATTEMPT
+            var output = b4b.FormStaticFileWithCacheBuster("~/js/myfile.js", "12345");
+
+            //VERIFY
+            output.ShouldEqual("url:js/myfile.js?v=12345");
+        }
     }
 }

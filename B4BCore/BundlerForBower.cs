@@ -35,6 +35,7 @@ namespace B4BCore
         private readonly Func<string, string> _getChecksumFromRelPath;
 
         private readonly RelPathSearcher _searcher;
+        private readonly ConfigInfo config;
 
         /// <summary>
         /// This creates the class ready for bundling
@@ -55,6 +56,26 @@ namespace B4BCore
             _getChecksumFromRelPath = getChecksumFromRelPath ??
                 (s => { throw new NotImplementedException("cachebuster parameters should not be allowed in this evironment.");});
             _searcher = new RelPathSearcher(getAbsPathFromVirtualPath);
+
+            config = ConfigInfo.ReadConfig(Path.Combine(_jsonDataDir, B4BConfigFileName));
+        }
+
+        /// <summary>
+        /// This returns a file reference with a cachebuster value added.
+        /// </summary>
+        /// <param name="fileUrl"></param>
+        /// <param name="cacheBusterValue"></param>
+        /// <returns></returns>
+        public string FormStaticFileWithCacheBuster(string fileUrl, string cacheBusterValue)
+        {
+            if (string.IsNullOrEmpty(config.StaticFileCaching))
+                throw new NotImplementedException("The BundlerForBower config file does not support adding a cachebuster."+
+                    "It is likely that you have local tags to do that.");
+
+            var absFileUrl = _getContentUrl(fileUrl);       //NOTE: Odd, but if I call in inside the replace it fails!
+            return
+                config.StaticFileCaching.Replace(FileTypeConfigInfo.FileUrlParam, absFileUrl)
+                    .Replace(FileTypeConfigInfo.CachebusterParam, cacheBusterValue);
         }
 
         /// <summary>
@@ -67,7 +88,6 @@ namespace B4BCore
         /// <returns></returns>
         public string CalculateHtmlIncludes(string bundleName, CssOrJs cssOrJs, bool inDevelopment)
         {
-            var config = ConfigInfo.ReadConfig(Path.Combine(_jsonDataDir, B4BConfigFileName));
             var settingFilePath = Path.Combine(_jsonDataDir, config.BundlesFileName);
             var reader = new ReadBundleFile(settingFilePath);
 

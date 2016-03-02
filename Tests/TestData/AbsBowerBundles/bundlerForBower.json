@@ -1,5 +1,6 @@
 ﻿{
   "BundlesFileName": "BowerBundles.json",
+  "StaticFileCaching": "{fileUrl}?v={cachebuster}",
   "JsDirectory": "TestData/js/",
   "JsDebugHtmlFormatString": "<script src='{fileUrl}'></script>",
   "JsNonDebugHtmlFormatString": "<script src='{fileUrl}?v={cachebuster}'></script>",

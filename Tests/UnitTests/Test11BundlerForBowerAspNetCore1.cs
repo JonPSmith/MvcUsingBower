@@ -151,5 +151,20 @@ namespace Tests.UnitTests
             lines.Length.ShouldEqual(1);
             lines[0].ShouldEqual("<link rel=\"stylesheet\" href='https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/css/bootstrap.min.css' asp-fallback-href='url:wwwroot/css/css/bootstrap.min.css' asp-fallback-test-class=\"sr-only\" asp-fallback-test-property=\"position\" asp-fallback-test-value=\"absolute\" />\r");
         }
+
+        [Test]
+        public void TestBundlerForBowerFormStaticFileWithCacheBusterOk()
+        {
+            //SETUP 
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("ASPNET Core 1 Config\\"), s => "url:" + s.Substring(2),
+                B4BSetupHelper.GetActualFilePathFromVirtualPath(), null);
+
+            //ATTEMPT
+            var ex = Assert.Throws<NotImplementedException>(() => b4b.FormStaticFileWithCacheBuster("js/myfile.js", "12345"));
+
+            //VERIFY
+            ex.Message.ShouldEqual("The BundlerForBower config file does not support adding a cachebuster." +
+                    "It is likely that you have local tags to do that.");
+        }
     }
 }

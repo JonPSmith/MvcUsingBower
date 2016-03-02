@@ -136,6 +136,7 @@
     <Content Include=".bowerrc" />
     <Content Include="bower.json" />
     <Content Include="gruntfile.js" />
+    <Content Include="images\annoyed-cat.jpg" />
     <Content Include="js\appLibsJs.js" />
     <Content Include="js\appLibsJs.min.js" />
     <Content Include="js\bootstrap.min.js" />

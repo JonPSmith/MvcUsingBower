@@ -14,6 +14,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Security.Cryptography;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using B4BCore;
 
@@ -40,7 +41,9 @@ namespace WebApplication.Mvc5
     /// </summary>
     public static class BowerBundlerHelper
     {
+        private static BundlerForBower _bundler;
         private static readonly ConcurrentDictionary<string, MvcHtmlString> IncludeCache = new ConcurrentDictionary<string, MvcHtmlString>();
+        private static readonly ConcurrentDictionary<string, string> StaticCachebusterCache = new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// This returns the CSS links using caching if forceState is null
@@ -72,6 +75,26 @@ namespace WebApplication.Mvc5
             return (forceState == null)
                 ? IncludeCache.GetOrAdd(bundleName, setup => CreateHtmlIncludes(helper, bundleName, CssOrJs.Js, forceState))
                 : CreateHtmlIncludes(helper, bundleName, CssOrJs.Js, forceState);
+        }
+
+        /// <summary>
+        /// This can be applied to any static file, e.g. an image, and it adds a cachebuster value to the file access.
+        /// The format of how the cacheBuster value is added is controlled by the 'StaticFileCaching' in the BunderForBower.json file.
+        /// If a checksum is calculated for the file it is cached locally, as it can take some time on large files.
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <param name="relFilePath">The relative path to the file inside the web application</param>
+        /// <param name="precalculatedCacheBuster">if null then a cachebusting value is calculated based on the file content (cached locally for performance)
+        /// If you provide a precalculated a cachebuster value, say created at build time, then that will be used instead</param>
+        /// <returns></returns>
+        public static string AddCacheBusterCached(this HtmlHelper helper, string relFilePath,
+            string precalculatedCacheBuster = null)
+        {
+            if (precalculatedCacheBuster == null)
+                precalculatedCacheBuster = StaticCachebusterCache.GetOrAdd(relFilePath, setup => GetChecksumFromRelPath(relFilePath));
+
+            var bundler = GetBundlerForBowerCached(helper);
+            return bundler.FormStaticFileWithCacheBuster(relFilePath, precalculatedCacheBuster);
         }
 
         /// <summary>
@@ -112,16 +135,25 @@ namespace WebApplication.Mvc5
             if (forceState != null)
                 isDebug = (bool)forceState;
 
-            var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
-            var bundler = new BundlerForBower(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), 
-                urlHelper.Content, System.Web.Hosting.HostingEnvironment.MapPath, GetChecksumFromRelPath);
-
+            var bundler = GetBundlerForBowerCached(helper);
             return new MvcHtmlString(bundler.CalculateHtmlIncludes(bundleName, cssOrJs, isDebug));
         }
 
         private static string GetChecksumFromRelPath(string fileRelPath)
         {
             return GetChecksumBasedOnFileContent(System.Web.Hosting.HostingEnvironment.MapPath(fileRelPath));
+        }
+
+        private static BundlerForBower GetBundlerForBowerCached(HtmlHelper helper)
+        {
+            if (_bundler == null)
+            {
+                var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
+                _bundler = new BundlerForBower(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(),
+                    urlHelper.Content, HostingEnvironment.MapPath, GetChecksumFromRelPath);
+            }
+
+            return _bundler;
         }
     }
 }

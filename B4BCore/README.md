@@ -49,6 +49,20 @@ It makes a decision to delivers individual files or the single minfied file that
 whether the code was compiled in DEBUG mode or not. This feature can be overridden on each method by the 
 optional 'forceState' parameter.
 
+## Using BowerBundleHelper to deliver static files with cachebuster added
+
+When delivering static files, e.g. images, you need to think about what happens if you change the
+image. The problem is if you change the image content but not its name then is caching is turned on
+the user's browser will use the old image, not the new image. 
+
+The `BowerBundlerHelper` has a command to turn a normal file reference into one containing a cahce busting
+value. For instance for an image you would use something like this in your razor view:
+
+`<img src='@Html.AddCacheBusterCached("~/images/annoyed-cat.jpg")' />`
+
+*See more in [Adding a cachebuster to other static files](#Adding-a-cachebuster-to-other-static-files) 
+section.*
+
 ## BowerBundles.json file format
 
 The BowerBundles.json file holds the data on what files are in reach bundle.
@@ -241,6 +255,23 @@ c. Run each of the Grunt **copy:???** tasks you created in step b.
 e. Include the command `@Html.HtmlScriptsCached("MyCDNBundle")` in one of your
 MVC .cshtml files - most likely _Layout.cshtml.
 
+## Adding a cachebuster to other static files
+
+As well as bundles B4B can help with individual static files, e.g. images.
+These is a command called `@Html.AddCacheBusterCached("~/images/my-cat-image.jpg")`.
+In this case a checksum of the file will be calculated based on its content and
+added as a cachebuster value. 
+
+In the case where you can pre-calculate the cachebsuter value then there is a second version
+which looks like this `@Html.AddCacheBusterCached("~/js/jquery.js", "2.1.4")`.
+
+The way that the cachebuster is applied is set by the `StaticFileCaching` property in the B4B config.
+This means you can use different ways of applying caching busting by adding your own `BundlerForBower.json` file
+with a different cache busting scheme.
+
+By default B4B uses the standard ASP.NET approach of adding a suffix, e.g. 
+
+`http://localhost:61427/images/annoyed-cat.jpg?v=xKyBfWHW-GTt8h8i8iy9p5h4Gx9EszkidtaUrkwVwvY`
 
 ## Optional bundlerForBower.json file format
 
