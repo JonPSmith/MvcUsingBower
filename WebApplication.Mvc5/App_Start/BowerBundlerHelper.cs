@@ -12,6 +12,8 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.IO;
+using System.Security.Cryptography;
 using System.Web.Mvc;
 using B4BCore;
 
@@ -72,6 +74,24 @@ namespace WebApplication.Mvc5
                 : CreateHtmlIncludes(helper, bundleName, CssOrJs.Js, forceState);
         }
 
+        /// <summary>
+        /// This calculate a checksum based on the content of the file. It actually uses a SHA256 Hash.
+        /// This is heplful as it allows you to use the general Grunt 'build'command, which rebuilds everything, 
+        /// and the cache buster won't change unless the content changes.
+        /// </summary>
+        /// <param name="absFilePath"></param>
+        /// <returns>a checksum string which is http safe</returns>
+        public static string GetChecksumBasedOnFileContent(string absFilePath)
+        {
+            using (var stream = File.OpenRead(absFilePath))
+            {
+                var sha = new SHA256Managed();
+                byte[] checksum = sha.ComputeHash(stream);
+                var base64 = Convert.ToBase64String(checksum);
+                return base64.Replace("/", "_").Replace("+", "-").Substring(0, base64.Length - 1);    //make valid HTTP parameter string
+            }
+        }
+
         //---------------------------------------
         //private methods
 
@@ -94,9 +114,14 @@ namespace WebApplication.Mvc5
 
             var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
             var bundler = new BundlerForBower(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), 
-                urlHelper.Content, System.Web.Hosting.HostingEnvironment.MapPath);
+                urlHelper.Content, System.Web.Hosting.HostingEnvironment.MapPath, GetChecksumFromRelPath);
 
             return new MvcHtmlString(bundler.CalculateHtmlIncludes(bundleName, cssOrJs, isDebug));
+        }
+
+        private static string GetChecksumFromRelPath(string fileRelPath)
+        {
+            return GetChecksumBasedOnFileContent(System.Web.Hosting.HostingEnvironment.MapPath(fileRelPath));
         }
     }
 }

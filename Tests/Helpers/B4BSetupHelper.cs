@@ -12,6 +12,7 @@
 
 using System;
 using System.IO;
+using WebApplication.Mvc5;
 
 namespace Tests.Helpers
 {
@@ -32,6 +33,12 @@ namespace Tests.Helpers
                 : TestFileHelpers.GetTestDataFileDirectory();
 
             return s => Path.Combine(topDir, s.Length <2 ? "" : s.Substring(2));
+        }
+
+        public static Func<string, string> GetChecksumFromRelPath(string testSubDirToUse = null)
+        {
+            var lookupFunc = GetActualFilePathFromVirtualPath(testSubDirToUse);
+            return s => BowerBundlerHelper.GetChecksumBasedOnFileContent(lookupFunc(s));
         }
     }
 }
