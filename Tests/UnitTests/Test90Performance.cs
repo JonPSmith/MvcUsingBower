@@ -81,7 +81,7 @@ namespace Tests.UnitTests
             //ATTEMPT
             using (new TimerToConsole("create BundlerForBower"))
             {
-                var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2), 
+                var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), 
                     B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
             }
 
@@ -92,13 +92,13 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerCssDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2), 
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), 
                 B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
 
             //ATTEMPT
             using (new TimerToConsole("CalculateHtmlIncludes Debug"))
             {
-                var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, true);
+                var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, true, s => "url:" + s.Substring(2));
             }
 
             //VERIFY
@@ -108,13 +108,13 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerCssNonDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2), 
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), 
                 B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
 
             //ATTEMPT
             using (new TimerToConsole("CalculateHtmlIncludes NonDebug"))
             {
-                var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, false);
+                var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, false, s => "url:" + s.Substring(2));
             }
 
             //VERIFY

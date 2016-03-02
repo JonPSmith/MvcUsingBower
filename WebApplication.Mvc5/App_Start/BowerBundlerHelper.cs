@@ -94,7 +94,8 @@ namespace WebApplication.Mvc5
                 precalculatedCacheBuster = StaticCachebusterCache.GetOrAdd(relFilePath, setup => GetChecksumFromRelPath(relFilePath));
 
             var bundler = GetBundlerForBowerCached(helper);
-            return bundler.FormStaticFileWithCacheBuster(relFilePath, precalculatedCacheBuster);
+            var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
+            return bundler.FormStaticFileWithCacheBuster(urlHelper.Content(relFilePath), precalculatedCacheBuster);
         }
 
         /// <summary>
@@ -136,7 +137,8 @@ namespace WebApplication.Mvc5
                 isDebug = (bool)forceState;
 
             var bundler = GetBundlerForBowerCached(helper);
-            return new MvcHtmlString(bundler.CalculateHtmlIncludes(bundleName, cssOrJs, isDebug));
+            var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
+            return new MvcHtmlString(bundler.CalculateHtmlIncludes(bundleName, cssOrJs, isDebug, urlHelper.Content));
         }
 
         private static string GetChecksumFromRelPath(string fileRelPath)
@@ -146,14 +148,9 @@ namespace WebApplication.Mvc5
 
         private static BundlerForBower GetBundlerForBowerCached(HtmlHelper helper)
         {
-            if (_bundler == null)
-            {
-                var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
-                _bundler = new BundlerForBower(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(),
-                    urlHelper.Content, HostingEnvironment.MapPath, GetChecksumFromRelPath);
-            }
-
-            return _bundler;
+            return _bundler ??
+                   (_bundler = new BundlerForBower(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(),
+                       HostingEnvironment.MapPath, GetChecksumFromRelPath));
         }
     }
 }

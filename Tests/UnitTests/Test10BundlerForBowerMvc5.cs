@@ -53,11 +53,11 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerCssDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2), 
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), 
                 B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
 
             //ATTEMPT
-            var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, true);
+            var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, true, s => "url:" + s.Substring(2));
 
             //VERIFY
             var lines = output.Split(new [] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
@@ -70,11 +70,11 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerCssNonDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2), 
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), 
                 B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
 
             //ATTEMPT
-            var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, false);
+            var output = b4b.CalculateHtmlIncludes("mainCss", CssOrJs.Css, false, s => "url:" + s.Substring(2));
 
             //VERIFY
             output.ShouldEqual("<link href='url:css/mainCss.min.css?v=TdTxYoaXjmCw1qNZ3ECkVr0eMx3rj6OFikZ6GH_a_Hw' rel='stylesheet'/>");
@@ -84,11 +84,11 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerJsDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2), 
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), 
                 B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
 
             //ATTEMPT
-            var output = b4b.CalculateHtmlIncludes("appLibsJs", CssOrJs.Js, true);
+            var output = b4b.CalculateHtmlIncludes("appLibsJs", CssOrJs.Js, true, s => "url:" + s.Substring(2));
 
             //VERIFY
             var lines = output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -102,11 +102,11 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerJsNonDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2), 
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), 
                 B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
 
             //ATTEMPT
-            var output = b4b.CalculateHtmlIncludes("appLibsJs", CssOrJs.Js, false);
+            var output = b4b.CalculateHtmlIncludes("appLibsJs", CssOrJs.Js, false, s => "url:" + s.Substring(2));
 
             //VERIFY
             output.ShouldEqual("<script src='url:js/appLibsJs.min.js?v=SnW8SeyCxQMkwmWggnI6zdSJoIVYPkVYHyM4jpW3jaQ'></script>");
@@ -119,11 +119,11 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerWithCdnJsDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("WithCdn\\"), s => "url:" + s.Substring(2), 
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("WithCdn\\"), 
                 B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
 
             //ATTEMPT
-            var output = b4b.CalculateHtmlIncludes("standardLibsCdnJs", CssOrJs.Js, true);
+            var output = b4b.CalculateHtmlIncludes("standardLibsCdnJs", CssOrJs.Js, true, s => "url:" + s.Substring(2));
 
             //VERIFY
             var lines = output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -136,11 +136,11 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerWithCdnJsNonDebugOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("WithCdn\\"), s => "url:" + s.Substring(2), 
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("WithCdn\\"), 
                 B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
 
             //ATTEMPT
-            var output = b4b.CalculateHtmlIncludes("standardLibsCdnJs", CssOrJs.Js, false);
+            var output = b4b.CalculateHtmlIncludes("standardLibsCdnJs", CssOrJs.Js, false, s => "url:" + s.Substring(2));
 
             //VERIFY
             var lines = output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -156,11 +156,11 @@ namespace Tests.UnitTests
         public void TestBundlerForBowerFormStaticFileWithCacheBusterOk()
         {
             //SETUP 
-            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"), s => "url:" + s.Substring(2),
+            var b4b = new BundlerForBower(B4BSetupHelper.GetDirRelToTestDirectory("NoConfig\\"),
                 B4BSetupHelper.GetActualFilePathFromVirtualPath(), B4BSetupHelper.GetChecksumFromRelPath());
 
             //ATTEMPT
-            var output = b4b.FormStaticFileWithCacheBuster("~/js/myfile.js", "12345");
+            var output = b4b.FormStaticFileWithCacheBuster("url:js/myfile.js", "12345");
 
             //VERIFY
             output.ShouldEqual("url:js/myfile.js?v=12345");

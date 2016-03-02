@@ -31,7 +31,6 @@ namespace B4BCore
     {
         internal const string B4BConfigFileName = "BundlerForBower.json";
         private readonly string _jsonDataDir;
-        private readonly Func<string, string> _getContentUrl;
         private readonly Func<string, string> _getChecksumFromRelPath;
 
         private readonly RelPathSearcher _searcher;
@@ -42,17 +41,14 @@ namespace B4BCore
         /// </summary>
         /// <param name="jsonDataDir">The absolute directory path to the folder that holds the BowerBundles.json and the 
         ///     optional BundlerForBower.json config file</param>
-        /// <param name="getContentUrl">This is a function which given a path relative to the MVC project and will
-        ///     return a http: url to use in the web site. In MVC5 this is provided by urlHelper.Content</param>
         /// <param name="getAbsPathFromVirtualPath">This is a function which given a path relative to the MVC project 
         ///     will return the absolute path. In MVC5 this is provided by System.Web.Hosting.HostingEnvironment.MapPath.</param>
         /// <param name="getChecksumFromRelPath">This is a function returns a checksum of a file referred to via an relative path
         ///     Can be null, in which case no checksum can be used.</param>
-        public BundlerForBower(string jsonDataDir, Func<string, string> getContentUrl, Func<string, string> getAbsPathFromVirtualPath,
+        public BundlerForBower(string jsonDataDir, Func<string, string> getAbsPathFromVirtualPath,
             Func<string, string> getChecksumFromRelPath)
         {
             _jsonDataDir = jsonDataDir;
-            _getContentUrl = getContentUrl;
             _getChecksumFromRelPath = getChecksumFromRelPath ??
                 (s => { throw new NotImplementedException("cachebuster parameters should not be allowed in this evironment.");});
             _searcher = new RelPathSearcher(getAbsPathFromVirtualPath);
@@ -63,16 +59,15 @@ namespace B4BCore
         /// <summary>
         /// This returns a file reference with a cachebuster value added.
         /// </summary>
-        /// <param name="fileUrl"></param>
+        /// <param name="absFileUrl"></param>
         /// <param name="cacheBusterValue"></param>
         /// <returns></returns>
-        public string FormStaticFileWithCacheBuster(string fileUrl, string cacheBusterValue)
+        public string FormStaticFileWithCacheBuster(string absFileUrl, string cacheBusterValue)
         {
             if (string.IsNullOrEmpty(config.StaticFileCaching))
                 throw new NotImplementedException("The BundlerForBower config file does not support adding a cachebuster."+
                     "It is likely that you have local tags to do that.");
 
-            var absFileUrl = _getContentUrl(fileUrl);       //NOTE: Odd, but if I call in inside the replace it fails!
             return
                 config.StaticFileCaching.Replace(FileTypeConfigInfo.FileUrlParam, absFileUrl)
                     .Replace(FileTypeConfigInfo.CachebusterParam, cacheBusterValue);
@@ -85,8 +80,9 @@ namespace B4BCore
         /// <param name="cssOrJs"></param>
         /// <param name="inDevelopment">This controls whether we supply individual files or development mode 
         /// or single minified files/CDNs in non-development mode</param>
+        /// <param name="getContentUrl">method to get url of content</param>
         /// <returns></returns>
-        public string CalculateHtmlIncludes(string bundleName, CssOrJs cssOrJs, bool inDevelopment)
+        public string CalculateHtmlIncludes(string bundleName, CssOrJs cssOrJs, bool inDevelopment, Func<string, string> getContentUrl)
         {
             var settingFilePath = Path.Combine(_jsonDataDir, config.BundlesFileName);
             var reader = new ReadBundleFile(settingFilePath);
@@ -100,7 +96,7 @@ namespace B4BCore
                 foreach (var relFilePath in _searcher.UnpackBundle(reader.GetBundleDebugFiles(bundleName)))
                 {
                     sb.AppendLine(fileTypeInfo.DebugHtmlFormatString
-                        .Replace(FileTypeConfigInfo.FileUrlParam, _getContentUrl(relFilePath)));
+                        .Replace(FileTypeConfigInfo.FileUrlParam, getContentUrl(relFilePath)));
                 }
                 return sb.ToString();
             }
@@ -109,11 +105,11 @@ namespace B4BCore
             var cdnLinks = reader.GetBundleCdnInfo(bundleName);
 
             return cdnLinks.Any() 
-                ? FormCdnIncludes(cdnLinks, bundleName, cssOrJs, fileTypeInfo) 
-                : FormSingleMinifiedFileInclude(bundleName, cssOrJs, fileTypeInfo);
+                ? FormCdnIncludes(cdnLinks, bundleName, cssOrJs, fileTypeInfo, getContentUrl) 
+                : FormSingleMinifiedFileInclude(bundleName, cssOrJs, fileTypeInfo, getContentUrl);
         }
 
-        private string FormCdnIncludes(IEnumerable<CdnInfo> cdnLinks, string bundleName, CssOrJs cssOrJs, FileTypeConfigInfo fileTypeInfo)
+        private string FormCdnIncludes(IEnumerable<CdnInfo> cdnLinks, string bundleName, CssOrJs cssOrJs, FileTypeConfigInfo fileTypeInfo, Func<string, string> getContentUrl)
         {
             if (string.IsNullOrEmpty(fileTypeInfo.CdnHtmlFormatString))
                 throw new InvalidOperationException(
@@ -124,7 +120,7 @@ namespace B4BCore
             foreach (var cdnLink in cdnLinks)
             {
                 var relFilePath = $"~/{fileTypeInfo.Directory}{cdnLink.Production}";
-                var httpFileUrl = _getContentUrl(relFilePath);
+                var httpFileUrl = getContentUrl(relFilePath);
                 sb.AppendLine(cdnLink.BuildCdnIncludeString(fileTypeInfo.CdnHtmlFormatString, httpFileUrl,
                     () => _getChecksumFromRelPath(relFilePath)));
             }
@@ -134,10 +130,10 @@ namespace B4BCore
         //------------------------------------------------------------------
         //private methods
 
-        private string FormSingleMinifiedFileInclude(string bundleName, CssOrJs cssOrJs, FileTypeConfigInfo fileTypeInfo)
+        private string FormSingleMinifiedFileInclude(string bundleName, CssOrJs cssOrJs, FileTypeConfigInfo fileTypeInfo, Func<string, string> getContentUrl)
         {
             var relFilePath = $"~/{fileTypeInfo.Directory}{bundleName}.min.{cssOrJs.ToString().ToLowerInvariant()}";
-            var fileUrl = _getContentUrl(relFilePath);
+            var fileUrl = getContentUrl(relFilePath);
             var htmlLink = fileTypeInfo.NonDebugHtmlFormatString.Replace(FileTypeConfigInfo.FileUrlParam, fileUrl);
             if (fileTypeInfo.NonDebugHtmlFormatString.Contains(FileTypeConfigInfo.CachebusterParam))
             {
