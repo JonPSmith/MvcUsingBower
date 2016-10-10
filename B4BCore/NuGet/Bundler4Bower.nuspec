@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<package >
+  <!-- Steps to making a Nuget package.
+   
+   Setup
+   =====
+   1. Download NuGet.exe from and place it in the directory C:\User\Jon\
+   2. Make sure path points to it by running the line below
+   set PATH=%PATH%;C:\Users\Jon\
+   
+   To create nuget package
+   =======================
+   1. Update version numbers
+      a. In the AssemblyVersionPart in NuGet folder 
+      b. Update the version field below 
+   2. RECOMPILE GenericServices in RELEASE MODE
+   3. Update release notes in the nuget package
+   4. Run the following two command lines
+      cd C:\Users\Jon\Documents\Visual Studio 2015\Projects\MvcUsingBower\B4BCore\NuGet
+      Nuget pack Bundler4Bower.nuspec -Symbols
+   
+   To Test locally
+   ===============
+   1. Copy to C:\Users\Jon\LocalNuget
+   2. Go to SampleMvcWebApp
+   3. Set Package manager->Package Source to All, or <your local source>
+   4. Use the following package manager command in target 
+      Install-Package Bundler4Bower -Project <projectname>
+      or
+      Update-Package Bundler4Bower
+   
+   To upload to NuGet
+   ==================
+   Quickest way is via command line as it pushes both the package and the symboles
+   Nuget SetApiKey <key>
+   Nuget Push Bundler4Bower.1.0.<ver>.nupkg
+   
+   -->
+  <metadata>
+    <id>Bundler4Bower</id>
+    <version>1.0.0</version>
+    <authors>Jon P Smith</authors>
+    <owners>Jon P Smith</owners>
+    <licenseUrl>https://raw.githubusercontent.com/JonPSmith/MvcUsingBower/master/licence.txt</licenseUrl>
+    <projectUrl>https://github.com/JonPSmith/MvcUsingBower</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/JonPSmith/MvcUsingBower/master/B4BCore/NuGet/BulderForBowerNuGetIcon128.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A system for bundling JavaScript and CSS when using Grunt/Gulp and Bower</description>
+    <releaseNotes>First NuGet version.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>ASP.NET MVC Bower Grunt Gulp</tags>
+    <dependencies>
+      <group targetFramework="net451">
+        <dependency id="Newtonsoft.Json" version="8.0" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Core" targetFramework="net451" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="..\bin\Release\B4BCore.dll" target="lib\net451" />
+    <file src="..\bin\Release\B4BCore.xml" target="lib\net451" />
+    <file src="readme.txt" target="" />
+  </files>
+</package>

@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\B4BCore.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -54,12 +55,18 @@
     <Compile Include="Internal\FileWithDateUpdated.cs" />
     <Compile Include="Internal\ReadBundleFile.cs" />
     <Compile Include="Internal\RelPathSearcher.cs" />
+    <Compile Include="NuGet\AssemblyVersionPart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Internal\defaultConfig.json" />
+    <None Include="NuGet\Bundler4Bower.nuspec" />
     <None Include="packages.config" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NuGet\BulderForBowerNuGetIcon128.png" />
+    <Content Include="NuGet\readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
