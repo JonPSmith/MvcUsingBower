@@ -19,6 +19,8 @@ Please read this for an overview.**
 The rest of this ReadMe file is about how to use this package if you wish to fork it
 or download it.
 
+## Now available on Nuget: [Bundler4Bower](https://www.nuget.org/packages/Bundler4Bower/).
+
 It also includes a useful library which I call *BundlerForBower*, or B4B for short.
 This provides similar features to MVC's `BundleConfig` class, but are designed specifically
 to work with Bower.
